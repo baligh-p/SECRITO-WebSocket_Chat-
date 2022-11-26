@@ -1,0 +1,36 @@
+.friendsContainer {
+    .invitesContainer {
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            --tw-text-opacity: 1;
+            background-color: rgb(99 102 241 / var(--tw-text-opacity));
+            border-radius: 20px;
+        }
+
+        &::-webkit-scrollbar-track {
+            --tw-border-opacity: 1;
+            background-color: rgb(64 64 64 / var(--tw-border-opacity));
+        }
+    }
+
+    .friendListContainer {
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            --tw-text-opacity: 1;
+            background-color: rgb(99 102 241 / var(--tw-text-opacity));
+            border-radius: 20px;
+        }
+
+        &::-webkit-scrollbar-track {
+            --tw-border-opacity: 1;
+            background-color: rgb(64 64 64 / var(--tw-border-opacity));
+        }
+    }
+}
