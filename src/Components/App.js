@@ -4,9 +4,8 @@ import Login from "./Login/Login"
 import AuthRoute from "../CustomRoute/AuthRoute"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import NotLoggedRoute from "../CustomRoute/NotLoggedRoute";
-import NavBar from "./NavBar/NavBar";
 import Home from "./Home/Home";
-import Nav from "../Nav/Nav";
+import Nav from "./Nav/Nav";
 
 
 
