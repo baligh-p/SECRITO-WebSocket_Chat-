@@ -18,7 +18,7 @@ const Friends = () => {
         searchInput.current.value = ""
     }
     return (
-        <div className='friendsContainer w-[26%] h-full ml-auto px-1.5 pb-3 border-l-2 border-neutral-700'>
+        <div className='friendsContainer w-[26%] h-full ml-auto px-1.5 pb-3'>
             <div className='invitesContainer max-h-[33%] w-full overflow-y-auto space-y-3'>
                 <Invite numberUnion="3" name="Baligh ZOGHLAMI" image="./assets/images/darius.jpg" />
                 <Invite numberUnion="3" name="Baligh ZOGHLAMI" image="./assets/images/darius.jpg" />
@@ -37,7 +37,7 @@ const Friends = () => {
                 <input ref={searchInput} onBlur={() => { if (!searchInput.current.value.length) setIsSearching(false) }} type="text"
                     className={`${isSearching ? "w-full px-2 border" : "w-0"} ml-auto duration-200 z-10 h-11 bg-neutral-900 outline-none text-white border-white rounded-md`} />
             </div>
-            <div className='friendListContainer w-full max-h-[55%] mt-3 space-y-2 text-body overflow-y-auto'>
+            <div className='friendListContaine w-full max-h-[55%] mt-3 space-y-2 text-body overflow-y-auto'>
                 <div className='hover:bg-neutral-800 element flex items-center duration-150 p-1 rounded-md cursor-pointer'>
                     <div className='flex items-end relative'>
                         <img src="/assets/images/darius.jpg" className='h-11 w-11 rounded-full' alt="profile image" />

@@ -2,7 +2,7 @@ import React from 'react'
 
 const Invite = React.memo(({ numberUnion, name, image }) => {
     return (
-        <div className='w-full flex item-center bg-neutral-800 rounded-md p-1.5 select-none'>
+        <div className='w-[95%] mx-auto flex item-center bg-neutral-800 rounded-md p-1.5 select-none'>
             <img src={image} className='h-11 w-11 rounded-full' alt="profile image" />
             <div className='ml-1.5'>
                 <h2 className='text-white text-[13px] tracking-wide text-body'>{name}</h2>

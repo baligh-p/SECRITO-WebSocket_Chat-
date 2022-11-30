@@ -5,7 +5,6 @@ import AuthRoute from "../CustomRoute/AuthRoute"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import NotLoggedRoute from "../CustomRoute/NotLoggedRoute";
 import Home from "./Home/Home";
-import Nav from "./Nav/Nav";
 
 
 
@@ -31,8 +30,7 @@ const App = () => {
           <Route path="" element={<div> not auth</div>} />
         </Route>
 
-        <Route path="/" element={<Nav />}>
-          <Route index element={<Home />} />
+        <Route path="/" element={<Home />}>
         </Route>
 
         <Route path="/auth" element={<AuthRoute />}>
