@@ -4,7 +4,7 @@ import { ReactComponent as SendSuccessIcon } from "../../../SVGs/success.svg"
 
 const OldDiscussion = React.memo(({ name, message, date, image }) => {
     return (
-        <div className='flex flex-col items-center font-body w-full hover:bg-indigo-800 duration-200 hover:shadow-lg shadow-black/80 p-2 rounded-lg select-none cursor-pointer'>
+        <div className='flex flex-col items-center font-body w-full hover:bg-indigo-700 duration-200 hover:shadow-lg shadow-black/80 p-2 rounded-lg select-none cursor-pointer'>
             <div className='flex items-center justify-start font-body w-full'>
                 <div className='flex items-end flex-none'>
                     <img src={image} className='h-11 w-11 rounded-full' alt="profile image" />

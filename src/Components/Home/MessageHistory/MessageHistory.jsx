@@ -10,7 +10,7 @@ const MessageHistory = () => {
                     <h1 className='font-title text-pink-500 text-4xl'>Logo</h1>
                 </div>
             </div>
-            <div className='flex flex-col space-y-4 h-[87%]'>
+            <div className='flex flex-col space-y-3 h-[87%]'>
                 <OldDiscussion image="/assets/images/darius.jpg" date="25 min" name="Baligh zoghlami" message="lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem " />
                 <OldDiscussion image="/assets/images/darius.jpg" date="25 min" name="Baligh zoghlami" message="lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem " />
                 <OldDiscussion image="/assets/images/darius.jpg" date="25 min" name="Baligh zoghlami" message="lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem " />
