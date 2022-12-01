@@ -40,11 +40,17 @@ const Discussion = () => {
 
     return (
         <div className='Discussion h-full flex flex-col w-[48%] box-border relative font-body'>
-            <div className='flex items-center px-3 h-16 w-full'>
-                <img src="/assets/images/darius.jpg" className='h-14 w-14 mr-2 rounded-full' alt="profile image" />
-                <h2 className='text-white text-xl'>Baligh Zoghlami</h2>
+            <div className='flex items-center px-3 h-20 w-full'>
+                <div className='flex items-end relative'>
+                    <img src="/assets/images/darius.jpg" className='h-14 w-14 rounded-full' alt="profile image" />
+                    <div className='bg-green-500 rounded-full h-3 w-3 relative right-[14px] box-content border-[3px] border-neutral-900'></div>
+                </div>
+                <div className='-ml-2'>
+                    <h2 className='text-white text-xl'>Baligh Zoghlami</h2>
+                    <p className='text-[13px] text-stone-300'>Active now</p>
+                </div>
                 <div className='ml-auto relative flex items-end justify-start'>
-                    <FavoriteIcon className='h-8 w-8 top-0.5 relative fill-transparent stroke-2 stroke-yellow-500 hover:fill-yellow-500 cursor-pointer mr-4 hover:scale-110 duration-200' />
+                    <FavoriteIcon className='h-8 w-8 top-px relative fill-transparent stroke-2 stroke-yellow-500 hover:fill-yellow-500 cursor-pointer mr-4 hover:scale-110 duration-200' />
                     <InfomationIcon id="infoButton" onClick={() => { setShowInfo(true) }} className='h-7 w-7 fill-indigo-600 cursor-pointer hover:fill-indigo-500 duration-200' />
                     <div className={`${showInfo ? "" : "hidden"} absolute -right-3 top-9`}>
                         <div className="border-x-[15px] ml-auto mr-2.5 rounded-t-xl border-b-[13px] border-b-neutral-800 border-x-transparent w-0 h-0"></div>
