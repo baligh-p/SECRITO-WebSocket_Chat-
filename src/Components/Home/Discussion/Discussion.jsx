@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import "./Discussion.scss"
 import { ReactComponent as MicrophoneIcon } from "../../../SVGs/microphone.svg"
 import { ReactComponent as ImageIcon } from "../../../SVGs/image.svg"
@@ -6,28 +6,76 @@ import { ReactComponent as ReactionIcon } from "../../../SVGs/reaction.svg"
 import { ReactComponent as DeleteIcon } from "../../../SVGs/deleteIcon.svg"
 import { ReactComponent as ShareIcon } from "../../../SVGs/share.svg"
 import { ReactComponent as InfomationIcon } from "../../../SVGs/info.svg"
+import { ReactComponent as UnfriendIcon } from "../../../SVGs/unfriend.svg"
+import { ReactComponent as FavoriteIcon } from "../../../SVGs/star.svg"
+import { ReactComponent as MuteIcon } from "../../../SVGs/mute.svg"
+import { ReactComponent as ReportIcon } from "../../../SVGs/report.svg"
 const Discussion = () => {
 
     const [message, setMessage] = useState("")
+    const [showInfo, setShowInfo] = useState(false)
 
 
+    const documentBlur = useCallback((e) => {
+        try {
+            if (e.target.id != "infoButton" && e.target.parentNode.id != "infoButton") {
+                setShowInfo(false)
+            }
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }, [])
 
 
-    //functions 
+    useEffect(() => {
+        if (showInfo) document.addEventListener("click", documentBlur)
+        return () => {
+            document.removeEventListener("click", documentBlur)
+        }
+    }, [showInfo])
+
+
 
 
     return (
-        <div className='Discussion h-full flex flex-col w-[48%] box-border relative pt-4 font-body'>
+        <div className='Discussion h-full flex flex-col w-[48%] box-border relative font-body'>
             <div className='flex items-center px-3 h-16 w-full'>
                 <img src="/assets/images/darius.jpg" className='h-14 w-14 mr-2 rounded-full' alt="profile image" />
                 <h2 className='text-white text-xl'>Baligh Zoghlami</h2>
-                <div className='ml-auto'>
-                    <InfomationIcon className='h-8 w-8 fill-indigo-600 cursor-pointer hover:scale-110 duration-200' />
+                <div className='ml-auto relative flex items-end justify-start'>
+                    <FavoriteIcon className='h-8 w-8 top-0.5 relative fill-transparent stroke-2 stroke-yellow-500 hover:fill-yellow-500 cursor-pointer mr-4 hover:scale-110 duration-200' />
+                    <InfomationIcon id="infoButton" onClick={() => { setShowInfo(true) }} className='h-7 w-7 fill-indigo-600 cursor-pointer hover:fill-indigo-500 duration-200' />
+                    <div className={`${showInfo ? "" : "hidden"} absolute -right-3 top-9`}>
+                        <div className="border-x-[15px] ml-auto mr-2.5 rounded-t-xl border-b-[13px] border-b-neutral-800 border-x-transparent w-0 h-0"></div>
+                        <ul className='py-2 space-y-2 rounded-lg w-[20vw] bg-neutral-800'>
+                            <li className='flex flex-col w-full cursor-pointer mx-auto px-3 py-1 hover:bg-neutral-700 duration-150 delay-75'>
+                                <div className='flex space-x-2'>
+                                    <ReportIcon className='h-7 w-7 fill-indigo-600' />
+                                    <p className='text-indigo-600'>Report</p>
+                                </div>
+                                <p className='text-stone-300 text-[12px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores, quasi?</p>
+                            </li>
+                            <li className='flex flex-col w-full cursor-pointer mx-auto px-3 py-1 hover:bg-neutral-700 duration-150 delay-75'>
+                                <div className='flex space-x-2'>
+                                    <MuteIcon className='h-7 w-7 relative right-0.5 fill-indigo-600' />
+                                    <p className='text-indigo-600'>Mute</p>
+                                </div>
+                                <p className='text-stone-300 text-[12px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, facilis!</p>
+                            </li>
+                            <li className='flex flex-col w-full cursor-pointer mx-auto px-3 py-1 hover:bg-neutral-700 duration-150 delay-75'>
+                                <div className='flex space-x-2'>
+                                    <UnfriendIcon className='h-7 w-7 fill-red-600' />
+                                    <p className='text-red-600'>Unfriend</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
 
             </div>
-            <div className='middlePart py-3 px-6 overflow-y-auto scrollbar-track-neutral-800 scrollbar-track-rounded-lg scrollbar-thin scrollbar-thumb-indigo-500 scrollbar-thumb-rounded '>
+            <div className='middlePart mt-2 py-3 px-6 overflow-y-auto scrollbar-track-neutral-800 scrollbar-track-rounded-lg scrollbar-thin scrollbar-thumb-indigo-500 scrollbar-thumb-rounded '>
                 <div className='flex items-center [&>*:nth-child(3)]:hover:flex [&>*:nth-child(3)]:hidden my-4 space-x-2 selection:bg-indigo-500'>
                     <img src="/assets/images/darius.jpg" className='w-8 h-8 rounded-full' alt="profile image of ..." />
                     <div className='p-1.5 bg-neutral-700 rounded-2xl max-w-[70%]'>
@@ -64,6 +112,7 @@ const Discussion = () => {
                 <div className='w-full flex items-center justify-center my-6'>
                     <p className='text-white'>19:15</p>
                 </div>
+
 
             </div>
             <div className='w-full flex items-end justify-center mt-auto mb-2'>

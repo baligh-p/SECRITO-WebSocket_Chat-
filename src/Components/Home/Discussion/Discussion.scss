@@ -1,10 +1,18 @@
 .Discussion {
     .middlePart {
-        height: calc(100vh - 143px);
+        height: calc(100vh - 128px);
     }
 }
 
 [contenteditable]:empty:before {
     content: attr(placeholder);
     opacity: 0.7;
+}
+
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid black;
 }
