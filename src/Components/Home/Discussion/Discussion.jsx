@@ -39,7 +39,7 @@ const Discussion = () => {
 
 
     return (
-        <div className='Discussion h-full flex flex-col w-[48%] box-border relative font-body'>
+        <div className='Discussion hidden h-full lg:flex flex-col w-[48%] box-border relative font-body'>
             <div className='flex items-center px-3 h-20 w-full'>
                 <div className='flex items-end relative'>
                     <img src="/assets/images/darius.jpg" className='h-14 w-14 rounded-full' alt="profile image" />
@@ -84,7 +84,7 @@ const Discussion = () => {
             <div className='middlePart mt-2 py-3 px-6 overflow-y-auto scrollbar-track-neutral-800 scrollbar-track-rounded-lg scrollbar-thin scrollbar-thumb-indigo-500 scrollbar-thumb-rounded '>
                 <div className='flex items-center [&>*:nth-child(3)]:hover:flex [&>*:nth-child(3)]:hidden my-4 space-x-2 selection:bg-indigo-500'>
                     <img src="/assets/images/darius.jpg" className='w-8 h-8 rounded-full' alt="profile image of ..." />
-                    <div className='p-1.5 bg-neutral-700 rounded-2xl max-w-[70%]'>
+                    <div className='shadow-black/30 shadow-lg p-1.5 bg-neutral-700 rounded-2xl max-w-[70%]'>
                         <p className='text-white text-[14px] break-words'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita, atque?</p>
                     </div>
                     <div className='flex items-center space-x-1 ml-auto mr-3'>
@@ -111,7 +111,7 @@ const Discussion = () => {
                             <ReactionIcon className='h-6 w-6 fill-indigo-500 cursor-pointer' />
                         </div>
                     </div>
-                    <div className='p-1.5 ml-auto bg-indigo-700 rounded-2xl max-w-[70%]'>
+                    <div className='shadow-black/40 shadow-lg p-1.5 ml-auto bg-indigo-700 rounded-2xl max-w-[70%]'>
                         <p className='text-white text-[14px] break-words'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis minus porro beatae delectus voluptas iure earum quaerat rerum dolorem assumenda exercitationem dolore iusto aperiam, nihil ab est impedit perspiciatis culpa.</p>
                     </div>
                 </div>
