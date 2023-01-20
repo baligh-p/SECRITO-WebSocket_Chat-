@@ -157,8 +157,16 @@ const refreshUserToken = async (req, res) => {
 }
 
 
+const welcome = async (req, res) => {
+    res.status(200).json({
+        req: req.body
+    })
+}
+
+
 module.exports = {
     createUser,
     refreshUserToken,
-    login
+    login,
+    welcome
 }
