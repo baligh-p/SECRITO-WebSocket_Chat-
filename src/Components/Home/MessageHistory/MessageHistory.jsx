@@ -4,8 +4,8 @@ import "./MessageHistory.scss"
 
 const MessageHistory = () => {
     return (
-        <div className='h-full lg:w-[26%] w-full pr-2 pl-0.5 font-body mr-auto flex flex-col'>
-            <div className='h-[18%] sticky lg:shadow-none shadow-md shadow-neutral-500 top-0 bg-neutral-900 z-40 flex flex-col'>
+        <div className='h-full lg:w-[26%] w-full lg:pr-2 pl-0.5 font-body mr-auto flex flex-col'>
+            <div className='h-[18%] sticky lg:shadow-none shadow-md shadow-neutral-800 top-0 bg-neutral-900 z-40 flex flex-col'>
                 <div className='w-full'>
                     <h1 className='font-title text-pink-500 text-[40px]'>Secrito</h1>
                 </div>
@@ -18,7 +18,7 @@ const MessageHistory = () => {
                     </div>
                 </div>
             </div>
-            <div className='flex flex-col space-y-3 pr-2.5 lg:h-[82%] lg:overflow-y-auto 
+            <div className='flex flex-col space-y-3 lg:pr-2.5 lg:h-[82%] lg:overflow-y-auto 
             lg:scrollbar-thin lg:scrollbar-track-neutral-800 lg:scrollbar-track-rounded-lg
             scrollbar-thumb-rounded-lg lg:scrollbar-thumb-indigo-600'>
                 <OldDiscussion image="/assets/images/darius.jpg" disconnectTime="" date="25 min" name="Baligh zoghlami" message="lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem " />

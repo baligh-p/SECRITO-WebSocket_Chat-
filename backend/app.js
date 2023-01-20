@@ -1,7 +1,8 @@
 var express = require("express");
 require("dotenv").config();
 const { connectDB } = require("./db/connect")
-
+const cookieparser = require("cookie-parser")
+const cors = require("cors")
 var app = express()
 
 
@@ -9,11 +10,19 @@ var { userRouter } = require("./Router/loginRoute")
 
 //middleware 
 app.use(express.json())
+app.use(cookieparser());
+app.use(cors(
+    {
+        credentials: true,
+        origin: 'http://127.0.0.1:5500',
+        optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    }
+))
 
 //routes  
 const baseURL = "/api/v1"
 
-app.use(baseURL + "/users", userRouter)
+app.use(`${baseURL}/users`, userRouter)
 
 
 //start project

@@ -46,17 +46,18 @@ const Login = () => {
 
     const [selectedSlide, setSelectedSlide] = useState(1)
 
+    const slides = [1, 2, 3, 4, 5]
     const moveSlide = (autoMove = null) => {
         if (autoMove != null) {
             setSelectedSlide(autoMove)
-            slider.current.scrollLeft = (autoMove - 1) * (slider.current.scrollWidth / 4)
+            slider.current.scrollLeft = (autoMove - 1) * (slider.current.scrollWidth / slides.length)
         }
         else {
-            selectedSlide == 4 ? setSelectedSlide(() => {
+            selectedSlide == slides.length ? setSelectedSlide(() => {
                 slider.current.scrollLeft = 0
                 return 1
             }) : setSelectedSlide(() => {
-                slider.current.scrollLeft = (selectedSlide) * (slider.current.scrollWidth / 4);
+                slider.current.scrollLeft = (selectedSlide) * (slider.current.scrollWidth / slides.length);
                 return selectedSlide + 1
             })
         }
@@ -120,30 +121,26 @@ const Login = () => {
 
             </div>
             <div className='w-[55%] bg-indigo-500 min-h-screen hidden lg:flex flex-col items-center justify-center'>
-                <Link to="/" className='self-start justify-self-start absolute top-7 ml-12 text-[27px] font-extrabold font-title tracking-widest text-white hover:text-indigo-100 duration-200 delay-75'><span className='mr-2'>Team</span>Lancers</Link>
+                <Link to="/" className='self-start justify-self-start absolute top-7 ml-12 text-[30px] font-extrabold font-title tracking-widest text-white hover:text-indigo-100 duration-200 delay-75'>Secrito</Link>
                 <div ref={slider} className='hideScrollBar scroll-smooth overflow-scroll flex snap-x items-center'>
-                    <div className='flex w-full snap-center flex-none flex-col items-center justify-center'>
-                        <img src='/assets/images/final.png' className='h-[290px]' />
-                        <h1 className='text-white tracking-wider text-[18px] text-center w-9/12 mt-14'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni, nisi.</h1>
-                    </div>
-                    <div className='flex w-full snap-center flex-none flex-col items-center justify-center'>
-                        <img src='/assets/icons/login.png' className='h-[290px]' />
-                        <h1 className='text-white tracking-wider text-[18px] text-center w-9/12 mt-14'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis, maiores.</h1>
-                    </div>
-                    <div className='flex w-full snap-center flex-none flex-col items-center justify-center'>
-                        <img src='/assets/images/final.png' className='h-[290px]' />
-                        <h1 className='text-white tracking-wider text-[18px] text-center w-9/12 mt-14'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro, eum?</h1>
-                    </div>
-                    <div className='flex w-full snap-center flex-none flex-col items-center justify-center'>
-                        <img src='/assets/icons/login.png' className='h-[290px]' />
-                        <h1 className='text-white tracking-wider text-[18px] text-center w-9/12 mt-14'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum, sequi.</h1>
-                    </div>
+                    {slides.map((element, index) => {
+                        if (index == slides.length - 1) {
+                            console.log(slides.push(slides[0], slides[1], slides[2], slides[3]))
+                        }
+                        return (
+                            <div key={index} className='flex w-full snap-center flex-none flex-col items-center justify-center'>
+                                <img src='/assets/icons/login.png' className='h-[290px]' />
+                                <h1 className='text-white tracking-wider text-[18px] text-center w-9/12 mt-14'>element {element}</h1>
+                            </div>
+                        )
+                    })}
                 </div>
                 <div className='flex items-center justify-center space-x-3 relative top-10'>
-                    <div onClick={() => { moveSlide(1) }} className='w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center cursor-pointer'>{selectedSlide == 1 && <div className='w-1.5 h-1.5 bg-indigo-700 rounded-full'></div>}</div>
-                    <div onClick={() => { moveSlide(2) }} className='w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center cursor-pointer'>{selectedSlide == 2 && <div className='w-1.5 h-1.5 bg-indigo-700 rounded-full'></div>}</div>
-                    <div onClick={() => { moveSlide(3) }} className='w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center cursor-pointer'>{selectedSlide == 3 && <div className='w-1.5 h-1.5 bg-indigo-700 rounded-full'></div>}</div>
-                    <div onClick={() => { moveSlide(4) }} className='w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center cursor-pointer'>{selectedSlide == 4 && <div className='w-1.5 h-1.5 bg-indigo-700 rounded-full'></div>}</div>
+                    {[1, 2, 3, 4, 5].map((element, index) => {
+                        return (
+                            <div key={index} onClick={() => { moveSlide(index) }} className='w-2.5 h-2.5 bg-white rounded-full flex items-center justify-center cursor-pointer'>{selectedSlide == index && <div className='w-1.5 h-1.5 bg-indigo-700 rounded-full'></div>}</div>
+                        )
+                    })}
                 </div>
             </div>
         </div>

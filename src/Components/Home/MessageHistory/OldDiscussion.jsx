@@ -12,7 +12,7 @@ const OldDiscussion = React.memo(({ name, message, date, image, disconnectTime }
                         && (<div className='bg-green-500 rounded-full h-3 text-[10px] text-white 
                         py-[1px] px-[4px] flex items-center justify-center min-w-3 relative right-[14px]
                         box-content border-2 border-neutral-900'>{disconnectTime}</div>) ||
-                        (<div className='bg-green-500 rounded-full h-3 w-3 relative right-[14px] box-content border-[3px] border-neutral-900'></div>)}
+                        (<div className='bg-green-500 rounded-full mr-2 h-3 w-3 relative right-[14px] box-content border-[3px] border-neutral-900'></div>)}
 
                 </div>
                 <div className='flex justify-start items-center -ml-2 w-[80%]'>

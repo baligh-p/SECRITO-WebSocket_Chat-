@@ -1,10 +1,10 @@
 var express = require("express")
 var Router = express.Router()
-var { createUser, getUsers, getUserbyId } = require("../Controller/userController")
+var { createUser, refreshUserToken, login } = require("../Controller/userController")
 
-Router.route("/create").post(createUser)
-Router.route("/getAll").get(getUsers)
-Router.route("/getUser/:id").get(getUserbyId)
+Router.route("/register").post(createUser)
+Router.route("/refresh").post(refreshUserToken)
+Router.route("/login").post(login)
 
 
 module.exports = { userRouter: Router }
