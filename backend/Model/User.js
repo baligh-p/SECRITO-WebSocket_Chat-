@@ -5,17 +5,23 @@ const User = new mongoose.Schema({
     username: {
         type: String,
         required: [true, "username required"],
-        minlength: 3,
+        minlength: [3, "username minlength"],
         unique: true,
     }, password: {
         type: String,
         required: [true, "password required"],
-        minlength: 5,
+        minlength: [5, "password minlength"],
     },
     email: {
         type: String,
         required: [true, "email required"],
-        unique: true
+        unique: true,
+        validate: {
+            validator: (value) => {
+                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)
+            },
+            message: "bad email"
+        }
     },
     dateCreation: {
         type: Date,

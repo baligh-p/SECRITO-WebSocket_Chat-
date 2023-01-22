@@ -2,6 +2,7 @@ var express = require("express")
 var Router = express.Router()
 var { createUser, refreshUserToken, login, welcome } = require("../Controller/userController")
 var authMiddleWare = require("../middleware/auth")
+
 Router.route("/register").post(createUser)
 Router.route("/refresh").post(refreshUserToken)
 Router.route("/login").post(login)

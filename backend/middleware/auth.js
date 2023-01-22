@@ -5,8 +5,7 @@ const authMiddleWare = (req, res, next) => {
     const token = req.headers["authorization"]?.split(" ")[1]
     if (!token) {
         return res.status(403).json({
-            "success": false,
-            "erroMessage": "no token provided"
+            "error": "noTokenProvided"
         })
     } else {
         try {
@@ -14,10 +13,7 @@ const authMiddleWare = (req, res, next) => {
             req.body = decoded;
         }
         catch (e) {
-            return res.status(406).json({
-                errorType: "unauthorized",
-                Errormessage: "bad token"
-            })
+            return res.status(406).json(e)
         }
     }
     return next();

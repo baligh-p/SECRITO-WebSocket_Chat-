@@ -10,7 +10,6 @@ const createUser = async (req, res) => {
         if (!data.email || !data.username || !data.password) {
             return res.status(500).json({
                 error: "all required",
-                success: false
             })
         }
         const encryptedPassword = await bcrypt.hash(data.password, 5)
@@ -49,13 +48,11 @@ const createUser = async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000
         })
         res.status(201).json({
-            success: true,
             accessToken
         })
     } catch (e) {
         console.log(e)
         res.status(500).json({
-            success: false,
             error: e
         })
     }
@@ -63,9 +60,9 @@ const createUser = async (req, res) => {
 const login = async (req, res) => {
     try {
         var data = req.body
-        if (data.username && data.password) {
+        if (data.email && data.password) {
             var userInstance = await User.findOne(
-                { username: data.username }
+                { email: data.email.toLowerCase() }
             )
             if (userInstance && (await bcrypt.compare(data.password, userInstance.password))) {
                 const accessToken = jwt.sign(
@@ -87,20 +84,19 @@ const login = async (req, res) => {
                     },
                     process.env.tokenKey,
                     {
-                        expiresIn: "1d"
+                        expiresIn: "7d"
                     }
                 )
                 res.cookie("jwt", refreshToken, {
                     httpOnly: true,
                     sameSite: "Strict",
                     secure: true,
-                    maxAge: 24 * 60 * 60 * 1000
+                    maxAge: 7 * 24 * 60 * 60 * 1000
                 })
-                return res.status(200).json({ success: true, accessToken })
+                return res.status(200).json({ accessToken })
             }
             else {
-                return res.status(404).json({
-                    "success": false,
+                return res.status(401).json({
                     "error": "bad crendentials",
                 })
             }
@@ -108,7 +104,6 @@ const login = async (req, res) => {
         }
         else {
             return res.status(400).json({
-                "success": false,
                 "error": "credentials required",
             })
         }

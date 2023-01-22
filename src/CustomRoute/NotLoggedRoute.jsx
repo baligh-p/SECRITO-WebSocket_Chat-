@@ -1,10 +1,11 @@
 import React from 'react'
 import { Navigate, Outlet } from "react-router-dom"
-
+import { useRecoilState } from "recoil"
+import UserState from "../SharedStates/UserState"
 const NotLoggedRoute = () => {
-    const isLogged = false
 
-    if (!isLogged) return (
+    const [user, setUser] = useRecoilState(UserState)
+    if (!user?.isLogged) return (
         <Navigate to="/auth/login" />
     )
     else return (
