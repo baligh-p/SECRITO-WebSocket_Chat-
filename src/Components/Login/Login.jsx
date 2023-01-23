@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react'
 import { GoogleLogin, } from "react-google-login"
 import { Link } from 'react-router-dom'
 import GoogleLoginButton from './GoogleLoginButton'
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import axiosInstance from "../../functions/AxiosIntance"
 import { useCookies } from "react-cookie"
 import { useRecoilState } from "recoil"
 import UserState from "../../SharedStates/UserState"
 import { useNavigate } from 'react-router-dom'
 import "./Login.scss"
+import Loader from '../CustomElement/Loader/Loader'
 
 const clientIDGoogle = "414420068121-tjnbn6jbi62ok10mcukos75l0homidot.apps.googleusercontent.com"
 
@@ -26,25 +27,37 @@ const Login = () => {
     }
 
 
+    // hide and show bad credentials error div
+    const [badCredentialsError, setBadCredentialsError] = useState(false)
+
+    //isLoading state 
+    const [isLoading, setIsLoading] = useState(false)
+
     const [cookie, setCookie] = useCookies()
     const [user, setUser] = useRecoilState(UserState)
     const navigate = useNavigate()
     const submit = async (data) => {
+        setIsLoading(true)
         try {
             var res = await axiosInstance.post("/users/login", data)
             if (res.status == 200) {
-                setCookie("atk", res.data?.accessToken, { maxAge: 365 * 24 * 60 * 60 * 60 })
-                setUser({ ...user, isLogged: true })
+                setBadCredentialsError(false)
+                setCookie("atk", res.data?.accessToken, { path: "/", maxAge: 365 * 24 * 60 * 60 * 60 })
                 navigate("/")
             }
         } catch (e) {
+            setIsLoading(false)
             const status = e.response?.status
             if (status === 500) {
                 //show notification for 500 status
             }
+            else if (status == 401) {
+                setBadCredentialsError(true)
+            }
+
         }
     }
-
+    //animate inputs
     const handleFocus = (e) => {
         const input = e.target
         if (input.value == "") {
@@ -96,6 +109,10 @@ const Login = () => {
 
     return (
         <div className='flex w-full'>
+            <div className={`${badCredentialsError ? "h-11" : "h-0"} flex overflow-hidden items-center duration-150 delay-75 px-1.5 justify-center font-body fixed top-0 w-full z-50 left-0 bg-red-500`}>
+                <p className='lg:text-lg text-[13px] text-center text-white'>We couldn’t find an account matching the email
+                    and password you entered.<span className='hidden lg:inline-flex'>Please check your email and password and try again.</span></p>
+            </div>
             <div className='lg:w-[45%] py-10 w-full min-h-screen flex flex-col bg-white items-center justify-center'>
                 <Link to="/" className='lg:text-[40px] text-[35px] mb-1 flex  text-indigo-500 tracking-wider font-title font-bold text-center'>Secrito</Link>
                 <p className='text-stone-500 mb-9 text-sm text-center'>log in to buy services, create or join teams.</p>
@@ -118,7 +135,7 @@ const Login = () => {
                     <p className='text-stone-500 text-sm whitespace-nowrap'>or</p>
                     <div className='bg-stone-300 h-[2px] w-1/2'></div>
                 </div>
-                <form form onSubmit={handleSubmit(submit)} className='lg:w-7/12 w-10/12 flex flex-col space-y-5'>
+                <form onSubmit={handleSubmit(submit)} className='lg:w-7/12 w-10/12 flex flex-col space-y-5'>
                     <div className='flex space-y-1 flex-col w-full'>
                         <label onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Email</label>
                         <input {...register("email", {
@@ -149,7 +166,10 @@ const Login = () => {
                         <Link to="/auth/forget_password" className='text-indigo-600 hover:text-indigo-700 underline decoration-indigo-600 text-sm ml-auto'>Forget Password?</Link>
                     </div>
                     <div className='w-full relative top-5 mb-auto'>
-                        <button type='submit' className="py-2 text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">Login</button>
+                        <button disabled={isLoading} type='submit' className="h-11 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
+                            {(!isLoading) && (<p>Login</p>) ||
+                                (<Loader height="23px" color="white" size="23px" border="3px" />)}
+                        </button>
                     </div>
                 </form>
 

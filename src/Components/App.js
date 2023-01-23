@@ -1,44 +1,53 @@
 import { gapi } from "gapi-script";
-import { useEffect, useState } from "react";
-import Login from "./Login/Login"
+import React, { useEffect, useState } from "react";
 import AuthRoute from "../CustomRoute/AuthRoute"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import NotLoggedRoute from "../CustomRoute/NotLoggedRoute";
-import Home from "./Home/Home";
-import Nav from "./Nav/Nav";
-import { useRecoilState } from "recoil"
+import { useSetRecoilState } from "recoil"
 import UserState from "./../SharedStates/UserState"
 import axiosInstance from "../functions/AxiosIntance"
 import { useCookies } from "react-cookie"
+import Login from "./Login/Login"
+import Home from "./Home/Home"
+import { disconnect, refreshToken } from "./../functions/tokenHandler"
 
 const App = () => {
-  const [user, setUser] = useRecoilState(UserState)
-  const [cookie, setCookie] = useCookies()
+
+  const setUser = useSetRecoilState(UserState)
+  const [cookie] = useCookies()
   const [loading, setLoading] = useState(true)
+  console.log("main app render")
+
   useEffect(() => {
-    if (user.isLogged && cookie.atk) {
-      console.log("verification and getting data")
-      axiosInstance.get("/welcome", {
+    if (cookie.atk) {
+      axiosInstance.get("/users/welcome", {
         headers: {
           Authorization: "Bearer " + cookie.atk
         }
       }).then((res) => {
+        setLoading(false)
         if (res.status === 200) {
-          setUser({ ...user, userData: res.data })
+          setUser((user) => { return { ...user, userData: res.data, isLogged: true } })
         }
       }).catch((err) => {
-
+        setLoading(false)
+        console.log(err)
         if (err.response?.status == 403 || (err.response?.data.message == "JsonWebTokenError")) {
           //no token provided or bad token
+          disconnect()
+
         }
         else if (err.response?.status === 406 && err.response.data.message == "TokenExpiredError") {
           //expired token
+          refreshToken()
         }
       })
     }
-  }, [user.isLogged])
+    else {
 
-
+      setLoading(false)
+    }
+  }, [cookie.atk])
   useEffect(() => {
     const clientID = "414420068121-tjnbn6jbi62ok10mcukos75l0homidot.apps.googleusercontent.com"
     function start() {
@@ -52,22 +61,20 @@ const App = () => {
 
 
   return (
+
     <BrowserRouter>
       <Routes>
-        <Route path="/rq" element={<NotLoggedRoute />}>
-          <Route path="" element={<div> not auth</div>} />
-        </Route>
 
-        <Route path="/" element={<Nav />}>
+        <Route path="/" element={<NotLoggedRoute loading={loading} />}>
           <Route path="" element={<Home />} />
         </Route>
 
-        <Route path="/auth" element={<AuthRoute />}>
+        <Route path="/auth" element={<AuthRoute loading={loading} />}>
           <Route path="login" element={<Login />} />
         </Route>
 
       </Routes>
-    </BrowserRouter>
+    </BrowserRouter >
   );
 }
 
