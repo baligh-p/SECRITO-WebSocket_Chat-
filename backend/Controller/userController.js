@@ -73,7 +73,7 @@ const login = async (req, res) => {
                     },
                     process.env.tokenKey,
                     {
-                        expiresIn: "10m"
+                        expiresIn: "15s"
                     }
                 )
                 const refreshToken = jwt.sign(
@@ -124,11 +124,11 @@ const refreshUserToken = async (req, res) => {
             if (err) {
                 console.log(err)
                 res.status(406).json({
-                    errorType: "unauthorized",
-                    Errormessage: "bad token"
+                    error: "unauthorized",
+                    message: "bad token"
                 })
             } else {
-                var accesToken = jwt.sign(
+                var accessToken = jwt.sign(
                     {
                         userId: decoded._id,
                         email: decoded.email,
@@ -136,17 +136,17 @@ const refreshUserToken = async (req, res) => {
                     },
                     process.env.tokenKey,
                     {
-                        expiresIn: "10m"
+                        expiresIn: "15s"
                     }
                 )
-                return res.status(200).json({ accesToken })
+                return res.status(200).json({ accessToken })
             }
         })
     } else {
         console.log(e)
         return res.status(406).json({
-            errorType: "unauthorized",
-            Errormessage: "no token provided"
+            error: "unauthorized",
+            message: "no token provided"
         })
     }
 }

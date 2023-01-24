@@ -4,8 +4,8 @@ var { createUser, refreshUserToken, login, welcome } = require("../Controller/us
 var authMiddleWare = require("../middleware/auth")
 
 Router.route("/register").post(createUser)
-Router.route("/refresh").post(refreshUserToken)
 Router.route("/login").post(login)
+Router.route("/refresh").get(refreshUserToken)
 Router.route("/welcome").get(authMiddleWare, welcome)
 
 

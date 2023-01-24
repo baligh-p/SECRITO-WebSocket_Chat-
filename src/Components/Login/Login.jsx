@@ -2,11 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { GoogleLogin, } from "react-google-login"
 import { Link } from 'react-router-dom'
 import GoogleLoginButton from './GoogleLoginButton'
-import { set, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import axiosInstance from "../../functions/AxiosIntance"
 import { useCookies } from "react-cookie"
-import { useRecoilState } from "recoil"
-import UserState from "../../SharedStates/UserState"
 import { useNavigate } from 'react-router-dom'
 import "./Login.scss"
 import Loader from '../CustomElement/Loader/Loader'
@@ -34,7 +32,6 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     const [cookie, setCookie] = useCookies()
-    const [user, setUser] = useRecoilState(UserState)
     const navigate = useNavigate()
     const submit = async (data) => {
         setIsLoading(true)
@@ -42,7 +39,15 @@ const Login = () => {
             var res = await axiosInstance.post("/users/login", data)
             if (res.status == 200) {
                 setBadCredentialsError(false)
-                setCookie("atk", res.data?.accessToken, { path: "/", maxAge: 365 * 24 * 60 * 60 * 60 })
+                setCookie("rmbr", data.rememberMe, { path: "/", maxAge: 365 * 24 * 60 * 60 * 60 })
+                setCookie(
+                    "atk",
+                    res.data?.accessToken,
+                    {
+                        path: "/",
+                        maxAge: data.rememberMe ? 365 * 24 * 60 * 60 * 60 : undefined
+                    }
+                )
                 navigate("/")
             }
         } catch (e) {
@@ -138,7 +143,7 @@ const Login = () => {
                 <form onSubmit={handleSubmit(submit)} className='lg:w-7/12 w-10/12 flex flex-col space-y-5'>
                     <div className='flex space-y-1 flex-col w-full'>
                         <label onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Email</label>
-                        <input {...register("email", {
+                        <input name="email" {...register("email", {
                             required: "Email is required",
                             pattern: {
                                 value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -150,7 +155,7 @@ const Login = () => {
                     </div>
                     <div className='flex space-y-1 flex-col w-full'>
                         <label onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Password</label>
-                        <input {...register("password", {
+                        <input name="password" {...register("password", {
                             required: "Too short password",
                             minLength: {
                                 value: 5,
@@ -161,8 +166,8 @@ const Login = () => {
                         <p className='text-red-500 font-body text-[13px] ml-1'>{errors.password?.message}</p>
                     </div>
                     <div className='flex items-center w-full'>
-                        <input type="checkbox" className='mr-2 form-checkbox text-indigo-600 rounded-sm h-4 w-4' />
-                        <label onClick={(e) => { e.target.parentNode.children[0].checked = !e.target.parentNode.children[0].checked }} className='select-none cursor-pointer text-sm text-neutral-700'>Remember Informations</label>
+                        <input {...register("rememberMe")} name="rememberMe" type="checkbox" className='mr-2 form-checkbox text-indigo-600 rounded-sm h-4 w-4' />
+                        <label onClick={(e) => { e.target.parentNode.children[0].click() }} className='select-none cursor-pointer text-sm text-neutral-700'>Remember Informations</label>
                         <Link to="/auth/forget_password" className='text-indigo-600 hover:text-indigo-700 underline decoration-indigo-600 text-sm ml-auto'>Forget Password?</Link>
                     </div>
                     <div className='w-full relative top-5 mb-auto'>
