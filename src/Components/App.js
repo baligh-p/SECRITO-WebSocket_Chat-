@@ -1,66 +1,40 @@
 import { gapi } from "gapi-script";
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import AuthRoute from "../CustomRoute/AuthRoute"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import NotLoggedRoute from "../CustomRoute/NotLoggedRoute";
 import { useSetRecoilState } from "recoil"
 import UserState from "./../SharedStates/UserState"
-import axiosInstance from "../functions/AxiosIntance"
 import { useCookies } from "react-cookie"
 import Login from "./Login/Login"
 import Home from "./Home/Home"
-import { useLogOut } from "../Hooks/Logout";
-import { useRefreshToken } from "../Hooks/RefreshToken"
+import { useTokenRequest } from "../Hooks/useTokenRequest"
+import PageLoader from "./CustomElement/PageLoader/PageLoader";
 
 const App = () => {
 
   const setUser = useSetRecoilState(UserState)
-  const [cookie, setCookie] = useCookies()
+  const [cookie] = useCookies()
   const [loading, setLoading] = useState(true) // define a loading to let custom auth route waiting loading payload
+
   console.log("main app render")
 
-
-  const logout = useLogOut()
-  const refreshToken = useRefreshToken(function () { }, () => {
-    setLoading(false)
-  })
+  const refreshTokenRequest = useTokenRequest(
+    "/users/welcome",
+    "get",
+    { forMain: true, setIsLoading: setLoading },
+    (data) => {
+      setUser((user) => { return { ...user, userData: data, isLogged: true } })
+    })
 
   //verify and get payload from server
-  const verifyToken = useCallback(async () => {
-
+  useEffect(() => {
     if (cookie.atk) {
-      try {
-        var res = await axiosInstance.get("/users/welcome", {
-          headers: {
-            Authorization: "Bearer " + cookie.atk
-          }
-        })
-        setLoading(false)
-        if (res.status === 200) {
-          setUser((user) => { return { ...user, userData: res.data, isLogged: true } })
-        }
-      }
-      catch (err) {
-        console.log(err)
-        //no token provided or bad token
-        if ((err.response?.status === 403 && err.response?.data?.name === "NoTokenProvided")
-          || (err.response?.data?.name === "JsonWebTokenError")) {
-          setLoading(false)
-          logout()
-        }
-        else if (err.response?.status === 406 && err.response?.data?.name === "TokenExpiredError") {
-          //expired token | user must be notified
-          refreshToken()
-        }
-      }
+      refreshTokenRequest()
     }
     else {
       setLoading(false)
     }
-  }, [cookie.atk])
-
-  useEffect(() => {
-    verifyToken()
   }, [cookie.atk])
 
 
@@ -88,6 +62,7 @@ const App = () => {
         <Route path="/auth" element={<AuthRoute loading={loading} />}>
           <Route path="login" element={<Login />} />
         </Route>
+        <Route path="/loader" element={<PageLoader />} />
 
       </Routes>
     </BrowserRouter >

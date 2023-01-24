@@ -1,0 +1,41 @@
+@keyframes titleLoaderAnimation {
+
+    0%,
+    7% {
+        transform: rotateZ(0);
+    }
+
+    15% {
+        transform: rotateZ(-12deg);
+    }
+
+    20% {
+        transform: rotateZ(12deg);
+    }
+
+    25% {
+        transform: rotateZ(-12deg);
+    }
+
+    32% {
+        transform: rotateZ(12deg);
+    }
+
+    40% {
+        transform: rotateZ(-12deg);
+    }
+
+    50%,
+    100% {
+        transform: rotateZ(0);
+    }
+
+}
+
+.pageLoaderContainer {
+    div h1 {
+        animation-name: titleLoaderAnimation;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+    }
+}

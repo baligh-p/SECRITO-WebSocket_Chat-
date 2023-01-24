@@ -1,15 +1,24 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Navigate, Outlet } from "react-router-dom"
 import { useRecoilState } from "recoil"
-import Loader from '../Components/CustomElement/Loader/Loader'
+import PageLoader from '../Components/CustomElement/PageLoader/PageLoader'
 import UserState from "../SharedStates/UserState"
 const AuthRoute = React.memo(({ loading }) => {
     const [user, setUser] = useRecoilState(UserState)
-    if (loading) {
-        return <div className='z-50 h-screen w-full bg-white flex items-center justify-center'>
-            <Loader height="50px" size="50px" border="5px" color="rgb(99 102 241)" />
-        </div>
-        //loader page
+    const [ready, setReady] = useState(loading)
+    useEffect(() => {
+        var time
+        if (!loading) {
+            time = setTimeout(() => {
+                setReady(false)
+            }, 1010)
+        }
+        return () => {
+            clearTimeout(time)
+        }
+    }, [loading])
+    if (ready) {
+        return <PageLoader finish={!loading} />
     }
     else if (user?.isLogged) {
 

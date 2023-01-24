@@ -3,6 +3,7 @@ import "./Friends.scss"
 import Invite from './Invite/Invite'
 import { ReactComponent as ImageIcon } from "../../../SVGs/image.svg"
 import { ReactComponent as NotificationIcon } from "../../../SVGs/mute.svg"
+import { useLogOut } from '../../../Hooks/Logout'
 const Friends = () => {
     //States
     const [isSearching, setIsSearching] = useState(false)
@@ -20,6 +21,9 @@ const Friends = () => {
         setIsSearching(false)
         searchInput.current.value = ""
     }
+
+    const logout = useLogOut()
+
     return (
         <div className='friendsContainer hidden lg:flex flex-col w-[26%] h-full ml-auto px-1.5 pb-3'>
             <div className='h-[25%] w-full flex flex-col items-center justify-center'>
@@ -33,7 +37,7 @@ const Friends = () => {
                         </div>
                         <div className='ml-auto mr-2'>
                             <h3 className='text-white font-body font-bold tracking-wide cursor-pointer'>Raed Bouafif</h3>
-                            <p className='text-sm text-red-500 hover:text-red-600 hover:underline cursor-pointer'>Log Out</p>
+                            <p onClick={logout} className='text-sm text-red-500 hover:text-red-600 hover:underline cursor-pointer'>Log Out</p>
                         </div>
                         <img src="/assets/images/RaedBouafif jimla.jpg" className='h-14 w-14 rounded-full' alt="photo profile of ..." />
                     </div>
