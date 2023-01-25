@@ -1,4 +1,4 @@
-import { gapi } from "gapi-script";
+// import { gapi } from "gapi-script";
 import React, { useEffect, useState } from "react";
 import AuthRoute from "../CustomRoute/AuthRoute"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
@@ -38,16 +38,16 @@ const App = () => {
   }, [cookie.atk])
 
 
-  useEffect(() => {
-    const clientID = "414420068121-tjnbn6jbi62ok10mcukos75l0homidot.apps.googleusercontent.com"
-    function start() {
-      gapi.client.init({
-        clientId: clientID,
-        scope: ""
-      })
-    }
-    gapi.load("client:auth2", start)
-  }, [])
+  // useEffect(() => {
+  //   const clientID = "414420068121-tjnbn6jbi62ok10mcukos75l0homidot.apps.googleusercontent.com"
+  //   function start() {
+  //     gapi.client.init({
+  //       clientId: clientID,
+  //       scope: ""
+  //     })
+  //   }
+  //   gapi.load("client:auth2", start)
+  // }, [])
 
 
   return (

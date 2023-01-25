@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { GoogleLogin, } from "react-google-login"
+// import { GoogleLogin, } from "react-google-login"
 import { Link } from 'react-router-dom'
-import GoogleLoginButton from './GoogleLoginButton'
+// import GoogleLoginButton from './GoogleLoginButton'
 import { useForm } from "react-hook-form"
 import axiosInstance from "../../functions/AxiosIntance"
 import { useCookies } from "react-cookie"
@@ -123,7 +123,7 @@ const Login = () => {
                 <p className='text-stone-500 mb-9 text-sm text-center'>log in to buy services, create or join teams.</p>
                 <div className='w-full flex items-center flex-col space-y-3 justify-center'>
                     <div className='lg:w-7/12 w-10/12'>
-                        <GoogleLogin clientId={clientIDGoogle}
+                        {/* <GoogleLogin clientId={clientIDGoogle}
                             render={renderProps => (
                                 <GoogleLoginButton clickFunction={renderProps.onClick} disabled={renderProps.disabled} />
                             )}
@@ -131,7 +131,7 @@ const Login = () => {
                             onFailure={failedFunction}
                             cookiePolicy={"single_host_origin"}
                             isSignedIn={false}
-                        />
+                        /> */}
                     </div>
 
                 </div>
