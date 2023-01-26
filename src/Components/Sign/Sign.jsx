@@ -1,20 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
-// import { GoogleLogin, } from "react-google-login"
-import { Link } from 'react-router-dom'
-// import GoogleLoginButton from './GoogleLoginButton'
-import { useForm } from "react-hook-form"
+import Loader from '../CustomElement/Loader/Loader'
 import axiosInstance from "../../functions/AxiosIntance"
+import { Link } from 'react-router-dom'
+import { useForm } from "react-hook-form"
 import { useCookies } from "react-cookie"
 import { useNavigate } from 'react-router-dom'
-import "./Login.scss"
-import Loader from '../CustomElement/Loader/Loader'
-
 const clientIDGoogle = "414420068121-tjnbn6jbi62ok10mcukos75l0homidot.apps.googleusercontent.com"
 
-const Login = () => {
+const Sign = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm()
     const slider = useRef(null)
+
+    const [conditionsError, setConditionsError] = useState(false)
 
     const successFunction = (res) => {
         console.log(res)
@@ -24,44 +22,21 @@ const Login = () => {
         console.log(res)
     }
 
-
-    // hide and show bad credentials error div
-    const [badCredentialsError, setBadCredentialsError] = useState(false)
-
-    //isLoading state 
     const [isLoading, setIsLoading] = useState(false)
 
     const [cookie, setCookie] = useCookies()
     const navigate = useNavigate()
     const submit = async (data) => {
-        setIsLoading(true)
-        try {
-            var res = await axiosInstance.post("/users/login", data)
-            if (res.status == 200) {
-                setBadCredentialsError(false)
-                setCookie("rmbr", data.rememberMe, { path: "/", maxAge: 365 * 24 * 60 * 60 * 60 })
-                setCookie(
-                    "atk",
-                    res.data?.accessToken,
-                    {
-                        path: "/",
-                        maxAge: data.rememberMe ? 365 * 24 * 60 * 60 * 60 : undefined
-                    }
-                )
-                navigate("/")
-            }
-        } catch (e) {
+        if (!data.conditions) setConditionsError(true)
+        else {
+            setIsLoading(true)
+            setConditionsError(false)
+            var res = await axiosInstance.post("/users/register", data)
+            console.log(res)
             setIsLoading(false)
-            const status = e.response?.status
-            if (status === 500) {
-                //show notification for 500 status
-            }
-            else if (status == 401) {
-                setBadCredentialsError(true)
-            }
-
         }
     }
+
     //animate inputs
     const handleFocus = (e) => {
         const input = e.target
@@ -104,7 +79,6 @@ const Login = () => {
             })
         }
     }
-
     useEffect(() => {
         const time = setInterval(moveSlide, 6000)
         return () => {
@@ -114,7 +88,7 @@ const Login = () => {
 
     return (
         <div className='flex w-full'>
-            <div className={`${badCredentialsError ? "h-11" : "h-0"} flex overflow-hidden items-center duration-150 delay-75 px-1.5 justify-center font-body fixed top-0 w-full z-50 left-0 bg-red-500`}>
+            <div className={`${conditionsError ? "h-11" : "h-0"} flex overflow-hidden items-center duration-150 delay-75 px-1.5 justify-center font-body fixed top-0 w-full z-50 left-0 bg-red-500`}>
                 <p className='lg:text-lg text-[13px] text-center text-white'>We couldn’t find an account matching the email
                     and password you entered.<span className='hidden lg:inline-flex'>Please check your email and password and try again.</span></p>
             </div>
@@ -135,15 +109,35 @@ const Login = () => {
                     </div>
 
                 </div>
-                <div className='flex items-center space-x-3 lg:w-7/12 w-10/12 my-7'>
+                <div className='flex items-center space-x-3 lg:w-8/12 w-10/12 my-7'>
                     <div className='bg-stone-300 h-[2px] w-1/2'></div>
                     <p className='text-stone-500 text-sm whitespace-nowrap'>or</p>
                     <div className='bg-stone-300 h-[2px] w-1/2'></div>
                 </div>
-                <form onSubmit={handleSubmit(submit)} className='lg:w-7/12 w-10/12 flex flex-col space-y-5'>
+                <form onSubmit={handleSubmit(submit)} className='lg:w-8/12 w-10/12 flex flex-col space-y-5'>
+                    <div className='lg:flex items-start space-y-5 lg:space-y-0 lg:space-x-[2%]'>
+                        <div className='flex space-y-1 flex-col lg:w-[49%]'>
+                            <label style={{ color: errors.name?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Name</label>
+                            <input style={{ borderColor: errors.name?.message ? "rgb(239 68 68)" : "" }} name="name" {...register("name", {
+                                required: "Name is required",
+                            })}
+                                onFocus={handleFocus} onBlur={handleBlur} type="text" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
+                            <p className='text-red-500 font-body text-[13px] ml-1'>{errors.name?.message}</p>
+                        </div>
+                        <div className='flex space-y-1 flex-col lg:w-[49%]'>
+                            <label style={{ color: errors.username?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Username</label>
+                            <input style={{ borderColor: errors.username?.message ? "rgb(239 68 68)" : "" }} name="username" {...register("username", {
+                                required: "Username is required",
+
+
+                            })}
+                                onFocus={handleFocus} onBlur={handleBlur} type="text" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
+                            <p className='text-red-500 font-body text-[13px] ml-1'>{errors.username?.message}</p>
+                        </div>
+                    </div>
                     <div className='flex space-y-1 flex-col w-full'>
-                        <label onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Email</label>
-                        <input name="email" {...register("email", {
+                        <label style={{ color: errors.email?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Email</label>
+                        <input style={{ borderColor: errors.email?.message ? "rgb(239 68 68)" : "" }} name="email" {...register("email", {
                             required: "Email is required",
                             pattern: {
                                 value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -154,30 +148,30 @@ const Login = () => {
                         <p className='text-red-500 text-[13px] font-body ml-1'>{errors.email?.message}</p>
                     </div>
                     <div className='flex space-y-1 flex-col w-full'>
-                        <label onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Password</label>
-                        <input name="password" {...register("password", {
+                        <label style={{ color: errors.password?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Password</label>
+                        <input style={{ borderColor: errors.password?.message ? "rgb(239 68 68)" : "" }} name="password" {...register("password", {
                             required: "Too short password",
                             minLength: {
                                 value: 5,
-                                message: "Too short password"
+                                message: "Password must have at least 5 characters"
                             }
                         })}
                             onFocus={handleFocus} onBlur={handleBlur} type="password" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
                         <p className='text-red-500 font-body text-[13px] ml-1'>{errors.password?.message}</p>
                     </div>
-                    <div className='flex items-center w-full'>
-                        <input {...register("rememberMe")} name="rememberMe" type="checkbox" className='mr-2 form-checkbox text-indigo-600 rounded-sm h-4 w-4' />
-                        <label onClick={(e) => { e.target.parentNode.children[0].click() }} className='select-none cursor-pointer text-sm text-neutral-700'>Remember Informations</label>
-                        <Link to="/auth/forget_password" className='text-indigo-600 hover:text-indigo-700 underline decoration-indigo-600 text-sm ml-auto'>Forget Password?</Link>
+                    <div className='flex items-start w-full'>
+                        <input {...register("conditions")} name="conditions" type="checkbox" className='mr-2 mt-[2px] form-checkbox text-neutral-900 rounded-sm h-4 w-4' />
+                        <label className='select-none text-xs text-neutral-700'>
+                            Creating an account means you’re okay with our <Link to="/conditions/terms_service" className='text-pink-600 hover:underline decoration-pink-600 font-semibold'>Terms of Service</Link> and <Link to="/conditions/private_policy" className='text-pink-600 hover:underline decoration-pink-600 font-semibold'>Privacy Policy</Link>.</label>
                     </div>
-                    <div className='w-full relative top-5 mb-auto'>
+                    <div className='w-full relative top-4 mb-auto'>
                         <button disabled={isLoading} type='submit' className="h-11 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
-                            {(!isLoading) && (<p>Login</p>) ||
+                            {(!isLoading) && (<p>Create account</p>) ||
                                 (<Loader height="23px" color="white" size="23px" border="3px" />)}
                         </button>
                     </div>
-                    <div className='relative top-7 mx-auto'>
-                        <p className='font-body text-neutral-800 text-sm'>Don't have an account ?<Link to="/auth/signup" className='font-bold text-pink-500 ml-3 hover:underline decoration-pink-500'>Sign up</Link></p>
+                    <div className='relative top-6 mx-auto'>
+                        <p className='font-body text-neutral-800 text-sm'>Already have an account ?<Link to="/auth/login" className='font-bold text-pink-500 ml-3 hover:underline decoration-pink-500'>Sign in</Link></p>
                     </div>
                 </form>
 
@@ -201,8 +195,8 @@ const Login = () => {
                     })}
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 
-export default Login    
+export default Sign

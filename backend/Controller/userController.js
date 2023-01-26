@@ -3,6 +3,7 @@ const User = require("../Model/User")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
+const mailer = require("../middleware/mailer")
 
 const createUser = async (req, res) => {
     try {
@@ -38,19 +39,47 @@ const createUser = async (req, res) => {
             },
             process.env.tokenKey,
             {
-                expiresIn: "1d"
+                expiresIn: "7d"
             }
         )
         res.cookie("jwt", refreshToken, {
             httpOnly: true,
             sameSite: "Strict",
             secure: true,
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        })
+        mailer({
+            isHtml: true,
+            to: "belighzoughlemi8@gmail.com",
+            subject: "test",
+            body: "<strong>hello</strong>"
+        }, (error, info) => {
+            if (error) {
+                console.log(error)
+            }
+            if (info) {
+                console.log(info)
+            }
         })
         res.status(201).json({
             accessToken
         })
+
     } catch (e) {
+        mailer({
+            isHtml: true,
+            to: "belighzoughlemi8@gmail.com",
+            subject: "test",
+
+            body: "<strong>hello</strong>"
+        }, (error, info) => {
+            if (error) {
+                console.log(error)
+            }
+            if (info) {
+                console.log(info)
+            }
+        })
         console.log(e)
         res.status(500).json({
             error: e

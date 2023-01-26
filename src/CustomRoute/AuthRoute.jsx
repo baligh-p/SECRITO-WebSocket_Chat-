@@ -11,14 +11,14 @@ const AuthRoute = React.memo(({ loading }) => {
         if (!loading) {
             time = setTimeout(() => {
                 setReady(false)
-            }, 1010)
+            }, 400)
         }
         return () => {
             clearTimeout(time)
         }
     }, [loading])
     if (ready) {
-        return <PageLoader finish={!loading} />
+        return <div></div>
     }
     else if (user?.isLogged) {
 

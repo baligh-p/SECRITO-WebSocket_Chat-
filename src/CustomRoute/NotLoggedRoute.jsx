@@ -12,7 +12,7 @@ const NotLoggedRoute = React.memo(({ loading }) => {
         if (!loading) {
             time = setTimeout(() => {
                 setReady(false)
-            }, 1010)
+            }, 400)
         }
 
         return () => {
