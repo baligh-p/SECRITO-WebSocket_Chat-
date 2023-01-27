@@ -15,7 +15,7 @@ const mailer = ({ isHtml = false, to, subject = "", body = "" }, callback = () =
 
 
     const mailOptions = isHtml ? {
-        "from": "Secrito" + process.env.EMAIL_ADDRESS,
+        "from": process.env.EMAIL_ADDRESS,
         "to": to,
         "subject": subject,
         "html": body

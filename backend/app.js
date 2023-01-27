@@ -14,7 +14,7 @@ app.use(cookieparser());
 app.use(cors(
     {
         credentials: true,
-        origin: 'http://localhost:3000',
+        origin: 'http://localhost:4000',
         optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
     }
 ))
@@ -29,7 +29,7 @@ app.use(`${baseURL}/users`, userRouter)
 const start = async () => {
     try {
         await connectDB()
-        app.listen(5000, () => {
+        app.listen(process.env.LISTENPORT, () => {
             console.log("listening in port : " + process.env.LISTENPORT)
         })
     } catch (e) {

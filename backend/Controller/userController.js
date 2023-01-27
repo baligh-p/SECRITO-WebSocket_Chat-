@@ -1,23 +1,45 @@
-
 const User = require("../Model/User")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const mailer = require("../middleware/mailer")
+const upload = require("../middleware/upload")
+// const MongoClient = require("mongodb").MongoClient;
+// const GridFSBucket = require("mongodb").GridFSBucket;
+// const nodeMailer = require("nodemailer")
+
+const baseUrl = "http://localhost:4000/files/";
+
 
 const createUser = async (req, res) => {
     try {
         const data = req.body
         if (!data.email || !data.username || !data.password) {
             return res.status(500).json({
-                error: "all required",
+                error: "all required", 
+            })
+        }
+        await upload(req.file, res)
+        if (req.file == undefined) {
+            res.send({
+              message: "You must select a file."
+            });
+        }
+        else if (req.file.bucketName=='photos'){
+            res.send({
+                message: "File has been uploaded."
+            })
+        }else{
+            res.status(400).json({
+                error : "Image Type should be (JPEG/PNG)"
             })
         }
         const encryptedPassword = await bcrypt.hash(data.password, 5)
         const userInstance = await User.create({
             username: data.username,
             password: encryptedPassword,
-            email: data.email.toLowerCase()
+            email: data.email.toLowerCase(),
+            image: req.file.filename
         })
         await userInstance.save()
         const accessToken = jwt.sign(
@@ -26,7 +48,7 @@ const createUser = async (req, res) => {
                 email: userInstance.email,
                 username: userInstance.username
             },
-            process.env.tokenKey,
+            process.env.TOKEN_KEY,
             {
                 expiresIn: "10m"
             }
@@ -37,7 +59,7 @@ const createUser = async (req, res) => {
                 email: userInstance.email,
                 username: userInstance.username
             },
-            process.env.tokenKey,
+            process.env.TOKEN_KEY,
             {
                 expiresIn: "7d"
             }
@@ -50,10 +72,10 @@ const createUser = async (req, res) => {
         })
         mailer({
             isHtml: true,
-            to: "belighzoughlemi8@gmail.com",
+            to: "raed.bouaafif@gmail.com",
             subject: "test",
             body: "<strong>hello</strong>"
-        }, (error, info) => {
+        }, (error, info) => {   
             if (error) {
                 console.log(error)
             }
@@ -68,7 +90,7 @@ const createUser = async (req, res) => {
     } catch (e) {
         mailer({
             isHtml: true,
-            to: "belighzoughlemi8@gmail.com",
+            to: "raed.bouaafif@@gmail.com",
             subject: "test",
 
             body: "<strong>hello</strong>"
@@ -80,9 +102,8 @@ const createUser = async (req, res) => {
                 console.log(info)
             }
         })
-        console.log(e)
         res.status(500).json({
-            error: e
+            error: e.message
         })
     }
 }
@@ -100,7 +121,7 @@ const login = async (req, res) => {
                         email: userInstance.email,
                         username: userInstance.username
                     },
-                    process.env.tokenKey,
+                    process.env.TOKEN_KEY,
                     {
                         expiresIn: "15s"
                     }
@@ -111,7 +132,7 @@ const login = async (req, res) => {
                         email: userInstance.email,
                         username: userInstance.username
                     },
-                    process.env.tokenKey,
+                    process.env.TOKEN_KEY,
                     {
                         expiresIn: "7d"
                     }
@@ -180,6 +201,73 @@ const refreshUserToken = async (req, res) => {
     }
 }
 
+// get all images ( mazelt configuration feha)
+// const getListFiles = async (req, res) => {
+//     try {
+//       await mongoClient.connect();
+  
+//       const database = mongoClient.db(dbConfig.database);
+//       const images = database.collection(dbConfig.imgBucket + ".files");
+  
+//       const cursor = images.find({});
+  
+//       if ((await cursor.count()) === 0) {
+//         return res.status(500).send({
+//           message: "No files found!",
+//         });
+//       }
+  
+//       let fileInfos = [];
+//       await cursor.forEach((doc) => {
+//         fileInfos.push({
+//           name: doc.filename,
+//           url: baseUrl + doc.filename,
+//         });
+//       });
+  
+//       return res.status(200).send(fileInfos);
+//     } catch (error) {
+//       return res.status(500).send({
+//         message: error.message,
+//       });
+//     }
+//   };
+
+
+
+//-------------------------------------------------------------------------------
+
+
+
+  // download from database a photo ( search by photo name)
+//   const download = async (req, res) => {
+//     try {
+//       await mongoClient.connect();
+  
+//       const database = mongoClient.db(dbConfig.database);
+//       const bucket = new GridFSBucket(database, {
+//         bucketName: dbConfig.imgBucket,
+//       });
+  
+//       let downloadStream = bucket.openDownloadStreamByName(req.params.name);
+  
+//       downloadStream.on("data", function (data) {
+//         return res.status(200).write(data);
+//       });
+  
+//       downloadStream.on("error", function (err) {
+//         return res.status(404).send({ message: "Cannot download the Image!" });
+//       });
+  
+//       downloadStream.on("end", () => {
+//         return res.end();
+//       });
+//     } catch (error) {
+//       return res.status(500).send({
+//         message: error.message,
+//       });
+//     }
+//   };
 
 const welcome = async (req, res) => {
     res.status(200).json(req.body)
