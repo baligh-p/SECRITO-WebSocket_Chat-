@@ -48,7 +48,6 @@ const Login = () => {
                         maxAge: data.rememberMe ? 365 * 24 * 60 * 60 * 60 : undefined
                     }
                 )
-                navigate("/")
             }
         } catch (e) {
             setIsLoading(false)
@@ -56,7 +55,7 @@ const Login = () => {
             if (status === 500) {
                 //show notification for 500 status
             }
-            else if (status == 401) {
+            else if (status == 400) {
                 setBadCredentialsError(true)
             }
 
@@ -177,7 +176,7 @@ const Login = () => {
                         </button>
                     </div>
                     <div className='relative top-7 mx-auto'>
-                        <p className='font-body text-neutral-800 text-sm'>Don't have an account ?<Link to="/auth/signup" className='font-bold text-pink-500 ml-3 hover:underline decoration-pink-500'>Sign up</Link></p>
+                        <p className='font-body text-neutral-800 text-sm'>Don't have an account ?<Link to="/auth/sign" className='font-bold text-pink-500 ml-3 hover:underline decoration-pink-500'>Sign up</Link></p>
                     </div>
                 </form>
 

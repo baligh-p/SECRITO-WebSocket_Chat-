@@ -11,6 +11,7 @@ import Home from "./Home/Home"
 import { useTokenRequest } from "../Hooks/useTokenRequest"
 import PageLoader from "./CustomElement/PageLoader/PageLoader";
 import Sign from "./Sign/Sign";
+import EmailVerify from "./Sign/EmailVerify/EmailVerify";
 
 const App = () => {
 
@@ -63,6 +64,7 @@ const App = () => {
         <Route path="/auth" element={<AuthRoute loading={loading} />}>
           <Route path="login" element={<Login />} />
           <Route path="sign" element={<Sign />} />
+          <Route path="email-verify" element={<EmailVerify />} />
         </Route>
         <Route path="/loader" element={<PageLoader />} />
 

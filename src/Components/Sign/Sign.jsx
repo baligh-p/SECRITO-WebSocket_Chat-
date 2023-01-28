@@ -3,7 +3,6 @@ import Loader from '../CustomElement/Loader/Loader'
 import axiosInstance from "../../functions/AxiosIntance"
 import { Link } from 'react-router-dom'
 import { useForm } from "react-hook-form"
-import { useCookies } from "react-cookie"
 import { useNavigate } from 'react-router-dom'
 const clientIDGoogle = "414420068121-tjnbn6jbi62ok10mcukos75l0homidot.apps.googleusercontent.com"
 
@@ -13,6 +12,8 @@ const Sign = () => {
     const slider = useRef(null)
 
     const [conditionsError, setConditionsError] = useState(false)
+    const [emailError, setEmailError] = useState("")
+    const [usernameError, setUsernameError] = useState("")
 
     const successFunction = (res) => {
         console.log(res)
@@ -24,16 +25,37 @@ const Sign = () => {
 
     const [isLoading, setIsLoading] = useState(false)
 
-    const [cookie, setCookie] = useCookies()
     const navigate = useNavigate()
     const submit = async (data) => {
         if (!data.conditions) setConditionsError(true)
         else {
+            setUsernameError("")
+            setEmailError("")
             setIsLoading(true)
             setConditionsError(false)
-            var res = await axiosInstance.post("/users/register", data)
-            console.log(res)
-            setIsLoading(false)
+            try {
+                const code = parseInt(Math.random() * 3 + 2)
+                var res = await axiosInstance.post("/users/vrfC", { ...data, "code": code })
+                if (res.status === 200) {
+                    navigate("/auth/email-verify", {
+                        state: { ...data, fCode: code, bCode: parseInt(res.data.code) }
+                    })
+                }
+                setIsLoading(false)
+            } catch (e) {
+                setIsLoading(false)
+                if (e.response?.status === 409 && e.response?.data?.find(element => element.error === "conflictUsername")) {
+                    setUsernameError(e.response.data.find(element => element.error === "conflictUsername").message)
+                }
+                if (e.response?.status === 409 && e.response?.data?.find(element => element.error === "conflictEmail")) {
+                    setEmailError(e.response.data.find(element => element.error === "conflictEmail").message)
+                }
+                else {
+                    //server error
+                    console.log("error server")
+                }
+
+            }
         }
     }
 
@@ -89,9 +111,9 @@ const Sign = () => {
     return (
         <div className='flex w-full'>
             <div className={`${conditionsError ? "h-11" : "h-0"} flex overflow-hidden items-center duration-150 delay-75 px-1.5 justify-center font-body fixed top-0 w-full z-50 left-0 bg-red-500`}>
-                <p className='lg:text-lg text-[13px] text-center text-white'>We couldn’t find an account matching the email
-                    and password you entered.<span className='hidden lg:inline-flex'>Please check your email and password and try again.</span></p>
+                <p className='lg:text-lg text-[13px] text-center text-white'>You must accept <span className='font-bold'>Terms of Service</span> and <span className='font-bold'>Privacy Policy</span> to create account.</p>
             </div>
+
             <div className='lg:w-[45%] py-10 w-full min-h-screen flex flex-col bg-white items-center justify-center'>
                 <h1 className='lg:text-[40px] text-[35px] mb-1 flex  text-indigo-500 tracking-wider font-title font-bold text-center'>Secrito</h1>
                 <p className='text-stone-500 mb-9 text-sm text-center'>log in to buy services, create or join teams.</p>
@@ -125,19 +147,17 @@ const Sign = () => {
                             <p className='text-red-500 font-body text-[13px] ml-1'>{errors.name?.message}</p>
                         </div>
                         <div className='flex space-y-1 flex-col lg:w-[49%]'>
-                            <label style={{ color: errors.username?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Username</label>
-                            <input style={{ borderColor: errors.username?.message ? "rgb(239 68 68)" : "" }} name="username" {...register("username", {
+                            <label style={{ color: errors.username?.message || usernameError ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Username</label>
+                            <input style={{ borderColor: errors.username?.message || usernameError ? "rgb(239 68 68)" : "" }} name="username" {...register("username", {
                                 required: "Username is required",
-
-
                             })}
                                 onFocus={handleFocus} onBlur={handleBlur} type="text" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
-                            <p className='text-red-500 font-body text-[13px] ml-1'>{errors.username?.message}</p>
+                            <p className='text-red-500 font-body text-[13px] ml-1'>{errors.username?.message || usernameError}</p>
                         </div>
                     </div>
                     <div className='flex space-y-1 flex-col w-full'>
-                        <label style={{ color: errors.email?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Email</label>
-                        <input style={{ borderColor: errors.email?.message ? "rgb(239 68 68)" : "" }} name="email" {...register("email", {
+                        <label style={{ color: errors.email?.message || emailError ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Email</label>
+                        <input style={{ borderColor: errors.email?.message || emailError ? "rgb(239 68 68)" : "" }} name="email" {...register("email", {
                             required: "Email is required",
                             pattern: {
                                 value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -145,7 +165,7 @@ const Sign = () => {
                             }
                         })}
                             onFocus={handleFocus} onBlur={handleBlur} type="text" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
-                        <p className='text-red-500 text-[13px] font-body ml-1'>{errors.email?.message}</p>
+                        <p className='text-red-500 text-[13px] font-body ml-1'>{errors.email?.message || emailError}</p>
                     </div>
                     <div className='flex space-y-1 flex-col w-full'>
                         <label style={{ color: errors.password?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Password</label>
@@ -166,7 +186,7 @@ const Sign = () => {
                     </div>
                     <div className='w-full relative top-4 mb-auto'>
                         <button disabled={isLoading} type='submit' className="h-11 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
-                            {(!isLoading) && (<p>Create account</p>) ||
+                            {(!isLoading) && (<p>Continue &#8594;</p>) ||
                                 (<Loader height="23px" color="white" size="23px" border="3px" />)}
                         </button>
                     </div>

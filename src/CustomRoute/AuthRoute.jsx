@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Navigate, Outlet } from "react-router-dom"
 import { useRecoilState } from "recoil"
-import PageLoader from '../Components/CustomElement/PageLoader/PageLoader'
 import UserState from "../SharedStates/UserState"
 const AuthRoute = React.memo(({ loading }) => {
     const [user, setUser] = useRecoilState(UserState)
@@ -17,6 +16,7 @@ const AuthRoute = React.memo(({ loading }) => {
             clearTimeout(time)
         }
     }, [loading])
+
     if (ready) {
         return <div></div>
     }
