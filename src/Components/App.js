@@ -12,6 +12,8 @@ import { useTokenRequest } from "../Hooks/useTokenRequest"
 import PageLoader from "./CustomElement/PageLoader/PageLoader";
 import Sign from "./Sign/Sign";
 import EmailVerify from "./Sign/EmailVerify/EmailVerify";
+import Loader from "./CustomElement/Loader/Loader";
+import ChangePassword from "./ChangePassword/ChangePassword";
 
 const App = () => {
 
@@ -67,7 +69,7 @@ const App = () => {
           <Route path="email-verify" element={<EmailVerify />} />
         </Route>
         <Route path="/loader" element={<PageLoader />} />
-
+        <Route path="/change-password" element={<ChangePassword />} />
       </Routes>
     </BrowserRouter >
   );
