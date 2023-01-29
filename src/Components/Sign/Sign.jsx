@@ -170,7 +170,7 @@ const Sign = () => {
                     <div className='flex space-y-1 flex-col w-full'>
                         <label style={{ color: errors.password?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Password</label>
                         <input style={{ borderColor: errors.password?.message ? "rgb(239 68 68)" : "" }} name="password" {...register("password", {
-                            required: "Too short password",
+                            required: "Password must have at least 5 characters",
                             minLength: {
                                 value: 5,
                                 message: "Password must have at least 5 characters"

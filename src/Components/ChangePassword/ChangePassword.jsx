@@ -47,7 +47,7 @@ const ChangePassword = () => {
                         className='relative z-50 duration-150 left-2 cursor-text p-1 bg-white max-w-min whitespace-nowrap select-none text-stone-700 lg:translate-y-[42px] translate-y-[46px] text-[15px]
                       lg:text-sm'>Password</label>
                     <input name="password" style={{ borderColor: errors.password?.message ? "rgb(239 68 68)" : "" }} {...register("password", {
-                        required: "Too short password",
+                        required: "Password must have at least 5 characters",
                         minLength: {
                             value: 5,
                             message: "Password must have at least 5 characters"

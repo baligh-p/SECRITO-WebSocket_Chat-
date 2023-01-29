@@ -155,10 +155,10 @@ const Login = () => {
                     <div className='flex space-y-1 flex-col w-full'>
                         <label onClick={(e) => { e.target.parentNode.children[1].focus() }} className='relative h-0 duration-150 left-2 cursor-text select-none text-stone-700 lg:translate-y-[18px] translate-y-[21px] text-[15px]  lg:text-sm'>Password</label>
                         <input name="password" {...register("password", {
-                            required: "Too short password",
+                            required: "Password must have at least 5 characters",
                             minLength: {
                                 value: 5,
-                                message: "Too short password"
+                                message: "Password must have at least 5 characters"
                             }
                         })}
                             onFocus={handleFocus} onBlur={handleBlur} type="password" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
