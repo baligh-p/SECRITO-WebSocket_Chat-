@@ -6,7 +6,6 @@ var storage = new GridFsStorage({
     url : process.env.MONGO_URI,
     options: { useNewUrlParser: true, useUnifiedTopology: true },
     file : (req,file) =>{
-        const match = ["image/png", "image/jpeg"]
         if (file.mimetype != "image/png" && file.mimetype != "image/jpeg") {
             res.status(400).json({
                 error : "File Type should be (JPEG/PNG)"

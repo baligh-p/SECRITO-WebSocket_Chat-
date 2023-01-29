@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const mailer = require("../middleware/mailer")
 const upload = require("../middleware/upload")
-// const MongoClient = require("mongodb").MongoClient;
-// const GridFSBucket = require("mongodb").GridFSBucket;
+const mongoClient = require("mongodb").MongoClient;
+//const GridFSBucket = require("mongodb").GridFSBucket;
 // const nodeMailer = require("nodemailer")
 
 const baseUrl = "http://localhost:4000/files/";
@@ -14,12 +14,14 @@ const baseUrl = "http://localhost:4000/files/";
 const createUser = async (req, res) => {
     try {
         const data = req.body
+        console.log(data)
         if (!data.email || !data.username || !data.password) {
             return res.status(500).json({
                 error: "all required", 
             })
         }
-        await upload(req.file, res)
+        await upload(req, res)
+        console.log(req.file)
         if (req.file == undefined) {
             res.send({
               message: "You must select a file."
@@ -46,7 +48,8 @@ const createUser = async (req, res) => {
             {
                 userId: userInstance._id,
                 email: userInstance.email,
-                username: userInstance.username
+                username: userInstance.username,
+                image: baseUrl+userInstance.image
             },
             process.env.TOKEN_KEY,
             {
@@ -57,7 +60,8 @@ const createUser = async (req, res) => {
             {
                 userId: userInstance._id,
                 email: userInstance.email,
-                username: userInstance.username
+                username: userInstance.username,
+                image: baseUrl+userInstance.image
             },
             process.env.TOKEN_KEY,
             {
@@ -119,7 +123,8 @@ const login = async (req, res) => {
                     {
                         userId: userInstance._id,
                         email: userInstance.email,
-                        username: userInstance.username
+                        username: userInstance.username,
+                        image: baseUrl+userInstance.image
                     },
                     process.env.TOKEN_KEY,
                     {
@@ -130,7 +135,8 @@ const login = async (req, res) => {
                     {
                         userId: userInstance._id,
                         email: userInstance.email,
-                        username: userInstance.username
+                        username: userInstance.username,
+                        image: baseUrl+userInstance.image
                     },
                     process.env.TOKEN_KEY,
                     {
@@ -182,7 +188,8 @@ const refreshUserToken = async (req, res) => {
                     {
                         userId: decoded._id,
                         email: decoded.email,
-                        username: decoded.username
+                        username: decoded.username,
+                        image: decoded.image
                     },
                     process.env.tokenKey,
                     {
@@ -200,6 +207,42 @@ const refreshUserToken = async (req, res) => {
         })
     }
 }
+
+// Retrieve and Return user Profile image
+const getImageByName = async (req,res) =>{
+    try{
+        x =  await getUserPhoto(req.params.imgName)
+        return res.status(200).json(x)
+    }catch(e) {
+        return res.status(500).send({
+            error : e.message
+        })
+    }
+}
+
+// Get UrlImage by ImageName
+async function getUserPhoto(imgName) {
+    try{
+      await mongoClient.connect()
+      const database = mongoClient.db(process.enc.databse)
+      const images = database.collection(process.enc.imgBucket + ".files")
+      cursor = images.find({ filename : imgName})
+      if (cursor.count == 0){
+        return {
+          message : "there is no image with the following name"+ imgName
+        }
+      }
+      let fileInfos = [];
+      await cursor.forEach((doc) => {
+        fileInfos.push({
+          url: baseUrl + doc.filename
+        });
+      });
+      return fileInfos[0]
+    }catch(e) {
+      return e.message
+    }
+  }
 
 // get all images ( mazelt configuration feha)
 // const getListFiles = async (req, res) => {
@@ -278,5 +321,6 @@ module.exports = {
     createUser,
     refreshUserToken,
     login,
-    welcome
+    welcome,
+    getImageByName
 }
