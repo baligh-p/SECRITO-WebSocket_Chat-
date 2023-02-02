@@ -26,6 +26,9 @@ const User = new mongoose.Schema({
             message: "bad email"
         }
     },
+    image: {
+        type: String,
+    },
     dateCreation: {
         type: Date,
         default: Date.now

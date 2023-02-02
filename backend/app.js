@@ -29,7 +29,7 @@ app.use(`${baseURL}/users`, userRouter)
 const start = async () => {
     try {
         await connectDB()
-        app.listen(5000, () => {
+        app.listen(process.env.LISTENPORT, () => {
             console.log("listening in port : " + process.env.LISTENPORT)
         })
     } catch (e) {

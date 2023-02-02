@@ -40,7 +40,7 @@ const ChangePassword = () => {
             <Link to="/" className='text-2xl text-pink-500 font-title font-bold lg:fixed absolute lg:top-3 lg:left-4 left-2 top-1'>Secrito</Link>
             <form onSubmit={handleSubmit(submit)} className="lg:w-5/12 xl:w-4/12 min-h-screen lg:min-h-min shadow-neutral-300 shadow-lg w-full p-7 rounded-md bg-white flex flex-col items-center justify-center">
                 <img className='h-24' src="/assets/images/padlock.png" alt="change password logo" />
-                <h1 className='my-5 font-bold text-2xl tracking-wide text-indigo-600'>Change Password</h1>
+                <h1 className='my-5 font-bold text-2xl tracking-wide text-indigo-600'>Reset Password</h1>
                 <p className='text-stone-500 text-sm text-center mb-5'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi corrupti quia a eum quasi officiis.</p>
                 {(!changed) && (<><div className='flex space-y-1 flex-col w-full md:w-9/12 lg:w-full'>
                     <label style={{ color: errors.password?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }}
@@ -68,7 +68,7 @@ const ChangePassword = () => {
                     </div></>)}
                 <div className='w-full md:w-9/12 lg:w-full'>
                     {(!changed) && (<button disabled={isLoading} type='submit' className="h-11 mt-14 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
-                        {(!isLoading) && (<p>Change Password</p>) ||
+                        {(!isLoading) && (<p>Reset Password</p>) ||
                             (<Loader height="23px" color="white" size="23px" border="3px" />)}
                     </button>) ||
                         (<div className='bg-green-300 h-11 rounded-md flex items-center'>

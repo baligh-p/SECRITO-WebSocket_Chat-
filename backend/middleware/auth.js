@@ -9,7 +9,7 @@ const authMiddleWare = (req, res, next) => {
         })
     } else {
         try {
-            const decoded = jwt.verify(token, process.env.tokenKey)
+            const decoded = jwt.verify(token, process.env.TOKEN_KEY)
             req.body = decoded;
         }
         catch (e) {

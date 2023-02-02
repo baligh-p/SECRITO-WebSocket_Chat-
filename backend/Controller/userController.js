@@ -1,9 +1,13 @@
-
 const User = require("../Model/User")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const mailer = require("../middleware/mailer")
+const upload = require("../middleware/upload")
+const mongoClient = require("mongodb").MongoClient;
+
+const baseUrl = "http://localhost:4000/files/";
+
 
 const createUser = async (req, res) => {
     try {
@@ -19,12 +23,29 @@ const createUser = async (req, res) => {
                 message: "password must have at least 5 characters"
             })
         }
+        // await upload(req, res)
+        // console.log(req.file)
+        // if (req.file == undefined) {
+        //     res.send({
+        //         message: "You must select a file."
+        //     });
+        // }
+        // else if (req.file.bucketName == 'photos') {
+        //     res.send({
+        //         message: "File has been uploaded."
+        //     })
+        // } else {
+        //     res.status(400).json({
+        //         error: "Image Type should be (JPEG/PNG)"
+        //     })
+        // }
         const encryptedPassword = await bcrypt.hash(data.password.trim(), 10)
         const userInstance = await User.create({
             username: data.username.trim(),
             password: encryptedPassword,
             email: data.email.toLowerCase().trim(),
-            name: data.name.trim()
+            name: data.name.trim(),
+            // image: req.file.filename
         })
 
         await userInstance.save()
@@ -33,9 +54,10 @@ const createUser = async (req, res) => {
                 userId: userInstance._id,
                 email: userInstance.email,
                 username: userInstance.username,
-                name: userInstance.name
+                name: userInstance.name,
+                // image: userInstance.image ? baseUrl + userInstance.image : userInstance.image
             },
-            process.env.tokenKey,
+            process.env.TOKEN_KEY,
             {
                 expiresIn: "15s"
             }
@@ -45,9 +67,10 @@ const createUser = async (req, res) => {
                 userId: userInstance._id,
                 email: userInstance.email,
                 username: userInstance.username,
-                name: userInstance.name
+                name: userInstance.name,
+                // image: baseUrl + userInstance.image
             },
-            process.env.tokenKey,
+            process.env.TOKEN_KEY,
             {
                 expiresIn: "7d"
             }
@@ -77,9 +100,12 @@ const createUser = async (req, res) => {
             error: "bad email"
         })
 
-        else res.status(500).json({
-            error: "server side"
-        })
+        else {
+            console.log(e)
+            res.status(500).json({
+                error: "server side"
+            })
+        }
     }
 }
 
@@ -149,9 +175,10 @@ const login = async (req, res) => {
                         userId: userInstance._id,
                         email: userInstance.email,
                         username: userInstance.username,
-                        name: userInstance.name
+                        name: userInstance.name,
+                        // image: baseUrl + userInstance.image
                     },
-                    process.env.tokenKey,
+                    process.env.TOKEN_KEY,
                     {
                         expiresIn: "15s"
                     }
@@ -161,9 +188,10 @@ const login = async (req, res) => {
                         userId: userInstance._id,
                         email: userInstance.email,
                         username: userInstance.username,
-                        name: userInstance.name
+                        name: userInstance.name,
+                        // image: baseUrl + userInstance.image
                     },
-                    process.env.tokenKey,
+                    process.env.TOKEN_KEY,
                     {
                         expiresIn: "7d"
                     }
@@ -196,12 +224,11 @@ const login = async (req, res) => {
 
 }
 
-
 const refreshUserToken = async (req, res) => {
     try {
         if (req.cookies?.jwt) {
             var refreshToken = req.cookies.jwt
-            jwt.verify(refreshToken, process.env.tokenKey, (err, decoded) => {
+            jwt.verify(refreshToken, process.env.TOKEN_KEY, (err, decoded) => {
                 if (err) {
                     console.log(err)
                     res.status(406).json({
@@ -214,9 +241,10 @@ const refreshUserToken = async (req, res) => {
                             userId: decoded._id,
                             email: decoded.email,
                             username: decoded.username,
-                            name: decoded.name
+                            name: decoded.name,
+                            // image: decoded.image
                         },
-                        process.env.tokenKey,
+                        process.env.TOKEN_KEY,
                         {
                             expiresIn: "15s"
                         }
@@ -240,6 +268,55 @@ const refreshUserToken = async (req, res) => {
 }
 
 
+const changePwd = (req, res) => {
+    try {
+
+    } catch (e) {
+    }
+}
+
+
+const sendChangePwdLink = (req, res) => {
+
+}
+
+// Retrieve and Return user Profile image
+const getImageByName = async (req, res) => {
+    try {
+        x = await getUserPhoto(req.params.imgName)
+        return res.status(200).json(x)
+    } catch (e) {
+        return res.status(500).send({
+            error: e.message
+        })
+    }
+}
+
+// Get UrlImage by ImageName
+async function getUserPhoto(imgName) {
+    try {
+        await mongoClient.connect()
+        const database = mongoClient.db(process.enc.databse)
+        const images = database.collection(process.enc.imgBucket + ".files")
+        cursor = images.find({ filename: imgName })
+        if (cursor.count == 0) {
+            return {
+                message: "there is no image with the following name" + imgName
+            }
+        }
+        let fileInfos = [];
+        await cursor.forEach((doc) => {
+            fileInfos.push({
+                url: baseUrl + doc.filename
+            });
+        });
+        return fileInfos[0]
+    } catch (e) {
+        return e.message
+    }
+}
+
+
 const welcome = async (req, res) => {
     res.status(200).json(req.body)
 }
@@ -250,5 +327,76 @@ module.exports = {
     refreshUserToken,
     login,
     welcome,
-    verifyCredentials
+    getImageByName,
+    verifyCredentials,
+    changePwd,
+    sendChangePwdLink
 }
+
+// get all images ( mazelt configuration feha)
+// const getListFiles = async (req, res) => {
+//     try {
+//       await mongoClient.connect();
+
+//       const database = mongoClient.db(dbConfig.database);
+//       const images = database.collection(dbConfig.imgBucket + ".files");
+
+//       const cursor = images.find({});
+
+//       if ((await cursor.count()) === 0) {
+//         return res.status(500).send({
+//           message: "No files found!",
+//         });
+//       }
+
+//       let fileInfos = [];
+//       await cursor.forEach((doc) => {
+//         fileInfos.push({
+//           name: doc.filename,
+//           url: baseUrl + doc.filename,
+//         });
+//       });
+
+//       return res.status(200).send(fileInfos);
+//     } catch (error) {
+//       return res.status(500).send({
+//         message: error.message,
+//       });
+//     }
+//   };
+
+
+
+//-------------------------------------------------------------------------------
+
+
+
+// download from database a photo ( search by photo name)
+//   const download = async (req, res) => {
+//     try {
+//       await mongoClient.connect();
+
+//       const database = mongoClient.db(dbConfig.database);
+//       const bucket = new GridFSBucket(database, {
+//         bucketName: dbConfig.imgBucket,
+//       });
+
+//       let downloadStream = bucket.openDownloadStreamByName(req.params.name);
+
+//       downloadStream.on("data", function (data) {
+//         return res.status(200).write(data);
+//       });
+
+//       downloadStream.on("error", function (err) {
+//         return res.status(404).send({ message: "Cannot download the Image!" });
+//       });
+
+//       downloadStream.on("end", () => {
+//         return res.end();
+//       });
+//     } catch (error) {
+//       return res.status(500).send({
+//         message: error.message,
+//       });
+//     }
+//   };

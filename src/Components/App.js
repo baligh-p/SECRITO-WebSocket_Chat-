@@ -14,6 +14,7 @@ import Sign from "./Sign/Sign";
 import EmailVerify from "./Sign/EmailVerify/EmailVerify";
 import Loader from "./CustomElement/Loader/Loader";
 import ChangePassword from "./ChangePassword/ChangePassword";
+import ForgotPassword from "./ForgotPassword/ForgotPassword";
 
 const App = () => {
 
@@ -67,6 +68,7 @@ const App = () => {
           <Route path="login" element={<Login />} />
           <Route path="sign" element={<Sign />} />
           <Route path="email-verify" element={<EmailVerify />} />
+          <Route path="forget-password" element={<ForgotPassword />} />
         </Route>
         <Route path="/loader" element={<PageLoader />} />
         <Route path="/change-password" element={<ChangePassword />} />

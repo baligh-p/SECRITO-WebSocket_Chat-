@@ -167,7 +167,7 @@ const Login = () => {
                     <div className='flex items-center w-full'>
                         <input {...register("rememberMe")} name="rememberMe" type="checkbox" className='mr-2 form-checkbox text-indigo-600 rounded-sm h-4 w-4' />
                         <label onClick={(e) => { e.target.parentNode.children[0].click() }} className='select-none cursor-pointer text-sm text-neutral-700'>Remember Informations</label>
-                        <Link to="/auth/forget_password" className='text-indigo-600 hover:text-indigo-700 underline decoration-indigo-600 text-sm ml-auto'>Forget Password?</Link>
+                        <Link to="/auth/forget-password" className='text-indigo-600 hover:text-indigo-700 underline decoration-indigo-600 text-sm ml-auto'>Forget Password?</Link>
                     </div>
                     <div className='w-full relative top-5 mb-auto'>
                         <button disabled={isLoading} type='submit' className="h-11 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
