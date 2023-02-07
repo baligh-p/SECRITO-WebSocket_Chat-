@@ -1,9 +1,12 @@
 const User = require("../Model/User")
+const LinkChangePwd = require("../Model/LinkChangePwd")
+const changePwdEmail = require("../Template/ChangePwdEmail")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const mailer = require("../middleware/mailer")
 const upload = require("../middleware/upload")
+const { Link } = require("react-router-dom")
 const mongoClient = require("mongodb").MongoClient;
 
 const baseUrl = "http://localhost:4000/files/";
@@ -268,16 +271,78 @@ const refreshUserToken = async (req, res) => {
 }
 
 
-const changePwd = (req, res) => {
+const changePwd = async (req, res) => {
     try {
-
+        var { email, password, code } = req.body
+        email = email.trim()
+        if (email && password?.trim().length >= 5 && code) {
+            const deleteInfo = await LinkChangePwd.deleteOne({ email, code })
+            if (deleteInfo.deletedCount) {
+                const encryptedPassword = await bcrypt.hash(password.trim(), 10)
+                const updateInfo = await User.updateOne({ email }, { password: encryptedPassword })
+                if (updateInfo.modifiedCount) {
+                    return res.status(200).json({ success: true })
+                }
+            }
+        }
+        return res.status(400).json({ error: "badRequest" })
     } catch (e) {
+        console.log(e)
+        return res.status(500).json({ error: "server side" })
     }
 }
 
 
-const sendChangePwdLink = (req, res) => {
+const generateCode = (nbr) => {
+    var code = ""
+    var type;
+    for (var i = 0; i < nbr; i++) {
+        type = parseInt(Math.random() * 2)
+        switch (type) {
+            case 0:
+                code += parseInt(Math.random() * 10)
+                break;
+            case 1:
+                code += String.fromCharCode(parseInt(Math.random() * 26) + 97)
+                break;
+        }
+    }
+    return code
+}
 
+const sendChangePwdLink = async (req, res) => {
+    try {
+        const email = req.params.email.trim()
+        if (email) {
+            const userInstance = await User.findOne({ email: email })
+            if (userInstance) {
+                const link = await LinkChangePwd.findOne({ "email": email }, "code")
+                var code
+                if (link) {
+                    code = link.code
+                } else {
+                    code = generateCode(30)
+                    const LinkPWD = await LinkChangePwd.create({
+                        code: code,
+                        email: email.toLowerCase()
+                    })
+                    await LinkPWD.save()
+                }
+                mailer({ isHtml: true, subject: "[Reset your password]", to: email, body: changePwdEmail(code, email) }, () => {
+                    console.log("success")
+                })
+            }
+            return res.status(200).json({ success: true })
+        } else return res.status(400).json({ "error": "email required" })
+    } catch (e) {
+        console.log(e)
+        if (e.errors?.email?.properties?.message === "bad email") res.status(400).json({
+            error: "bad email"
+        })
+        else return res.status(500).json({
+            error: "server side"
+        })
+    }
 }
 
 // Retrieve and Return user Profile image

@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
-const ImageLoader = ({ src, alt, className, click }) => {
+const ImageLoader = React.memo(({ src, alt, className, click }) => {
     const img = useRef(null)
     const [loading, setLoading] = useState(true)
     return (
@@ -9,6 +9,6 @@ const ImageLoader = ({ src, alt, className, click }) => {
             <div className={`h-full w-full bg-gray-300/80 animate-pulse ${loading ? '' : 'hidden'}`}></div>
         </div>
     )
-}
+})
 
 export default ImageLoader    

@@ -1,0 +1,64 @@
+@keyframes timerAnimation {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes notificationContainerAnimation {
+    0% {
+        transform: translateY(-140%);
+    }
+
+    30% {
+        transform: translateY(36%);
+    }
+
+    40% {
+        transform: translateY(24%);
+    }
+
+    45% {
+        transform: translateY(33%);
+    }
+
+    50% {
+        transform: translateY(27%);
+    }
+
+    100%,
+    60% {
+        transform: translateY(30%);
+    }
+}
+
+
+.notificationContainer {
+    .timer {
+        position: absolute;
+        bottom: 0;
+
+        &::before {
+            content: "";
+            position: absolute;
+            width: 0%;
+            animation-name: timerAnimation;
+            animation-duration: 4000ms; //time line 
+            animation-delay: 1700ms; // delay of forward 
+            animation-timing-function: linear;
+            left: 0;
+            top: 0;
+        }
+    }
+
+    .notification {
+        position: absolute;
+        transform: translateY(30%);
+        transition: 800ms;
+        animation-name: notificationContainerAnimation;
+        animation-duration: 1700ms;
+    }
+}

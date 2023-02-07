@@ -12,5 +12,5 @@ root.render(
         <App />
       </CookiesProvider>
     </RecoilRoot>
-  </React.StrictMode>
+  </React.StrictMode >
 );

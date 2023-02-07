@@ -15,6 +15,7 @@ import EmailVerify from "./Sign/EmailVerify/EmailVerify";
 import Loader from "./CustomElement/Loader/Loader";
 import ChangePassword from "./ChangePassword/ChangePassword";
 import ForgotPassword from "./ForgotPassword/ForgotPassword";
+import Notification from "./CustomElement/Notification/Notification";
 
 const App = () => {
 
@@ -58,8 +59,10 @@ const App = () => {
   return (
 
     <BrowserRouter>
+      <React.Fragment>
+        <Notification />
+      </React.Fragment>
       <Routes>
-
         <Route path="/" element={<NotLoggedRoute loading={loading} />}>
           <Route path="" element={<Home />} />
         </Route>
@@ -69,12 +72,13 @@ const App = () => {
           <Route path="sign" element={<Sign />} />
           <Route path="email-verify" element={<EmailVerify />} />
           <Route path="forget-password" element={<ForgotPassword />} />
+          <Route path="change-password/:email/:code" element={<ChangePassword />} />
         </Route>
         <Route path="/loader" element={<PageLoader />} />
-        <Route path="/change-password" element={<ChangePassword />} />
       </Routes>
     </BrowserRouter >
   );
 }
+
 
 export default App;

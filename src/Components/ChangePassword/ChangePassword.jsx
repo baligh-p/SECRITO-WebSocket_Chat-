@@ -2,11 +2,19 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from "react-hook-form"
 import Loader from '../CustomElement/Loader/Loader'
+import { useParams } from "react-router-dom"
+import axiosInstance from "../../functions/AxiosIntance"
+import { NotificationState } from '../../SharedStates/NotificationState'
+import { useSetRecoilState } from 'recoil'
 const ChangePassword = () => {
 
     const { register, handleSubmit, formState: { errors }, watch } = useForm()
     const [isLoading, setIsLoading] = useState(false)
     const [changed, setChanged] = useState(false)
+
+    const { email, code } = useParams()
+
+    const notification = useSetRecoilState(NotificationState)
 
     const handleFocus = (e) => {
         const input = e.target
@@ -32,8 +40,24 @@ const ChangePassword = () => {
         }
     }
 
-    const submit = (data) => {
-        setChanged(true)
+    const submit = async (data) => {
+        try {
+            const res = await axiosInstance({
+                method: "post",
+                data: {
+                    "password": data.password,
+                    "email": email,
+                    "code": code
+                },
+                url: "/users/changePWD"
+            })
+            if (res.status === 200) {
+                setChanged(true)
+            }
+        } catch (e) {
+            console.log(e)
+            notification({ type: "error", message: "something wrong. please try again in few seconds." })
+        }
     }
     return (
         <div className='min-h-screen lg:py-3 font-body w-full flex items-center justify-center bg-indigo-300/5'>
@@ -67,7 +91,7 @@ const ChangePassword = () => {
                         <p className='text-red-500 font-body text-[13px] ml-1'>{errors.confirme?.message}</p>
                     </div></>)}
                 <div className='w-full md:w-9/12 lg:w-full'>
-                    {(!changed) && (<button disabled={isLoading} type='submit' className="h-11 mt-14 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
+                    {(!changed) && (<button disabled={isLoading || changed} type='submit' className="h-11 mt-14 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
                         {(!isLoading) && (<p>Reset Password</p>) ||
                             (<Loader height="23px" color="white" size="23px" border="3px" />)}
                     </button>) ||
