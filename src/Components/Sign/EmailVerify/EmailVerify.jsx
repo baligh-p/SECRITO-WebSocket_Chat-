@@ -40,7 +40,14 @@ const EmailVerify = React.memo(() => {
             //server error or user error
         }
     }
-    const cd = useMemo(() => location.state ? ((7 ** (Number(location.state.fCode) * location.state.bCode)) + "").substring(0, 4) : null, [location.state])
+    function generateAccountVerifyCode(code1, code2) {
+        var firstNumber = Math.abs(Number(code2[0]) - Number(code1[0]) + 5) % 9
+        var secondNumber = (9 - Number(code2[1]) + 1) % 9
+        var thirdNumber = Math.abs((Number(code2[1]) - Number(code1[1]) + 3)) % 9
+        var fourthNumber = (9 - Number(code2[0]) + 6) % 9
+        return "" + firstNumber + "" + secondNumber + "" + thirdNumber + "" + fourthNumber
+    }
+    const cd = useMemo(() => location.state?.fCode ? generateAccountVerifyCode(location.state?.fCode, location.state?.bCode) : null, [location.state])
     useEffect(() => {
         if (location.state) {
             if (!firstInput) form.current.childNodes[0].focus()

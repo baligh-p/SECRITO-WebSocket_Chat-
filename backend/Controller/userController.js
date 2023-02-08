@@ -113,10 +113,20 @@ const createUser = async (req, res) => {
 }
 
 
+function generateAccountVerifyCode(code1, code2) {
+    var firstNumber = Math.abs(Number(code2[0]) - Number(code1[0]) + 5) % 9
+    var secondNumber = (9 - Number(code2[1]) + 1) % 9
+    var thirdNumber = Math.abs((Number(code2[1]) - Number(code1[1]) + 3)) % 9
+    var fourthNumber = (9 - Number(code2[0]) + 6) % 9
+    return "" + firstNumber + "" + secondNumber + "" + thirdNumber + "" + fourthNumber
+}
+
 const verifyCredentials = async (req, res) => {
     try {
         const data = req.body
-        if (!data.email?.trim() || !data.username?.trim() || !data.password?.trim() || !data.name?.trim()) {
+        const verifCodeType = typeof (data.code)
+        if (!data.email?.trim() || !data.username?.trim() || !data.password?.trim()
+            || !data.name?.trim() || verifCodeType !== "string" || data.code?.length !== 2) {
             return res.status(422).json({
                 error: "all required",
             })
@@ -146,19 +156,21 @@ const verifyCredentials = async (req, res) => {
         if (errors.length) {
             return res.status(409).json(errors)
         }
-        const code = parseInt(Math.random() * 3 + 2)
+        const code = parseInt(Math.random() * 10) + "" + parseInt(Math.random() * 10)
+        const frontCode = req.body.code
         mailer({
             isHtml: true,
             from: "belighzoughlemi6@gmail.com",
             to: "belighzoughlemi8@gmail.com",
             subject: "Please Verify your account using this code",
-            body: ((7 ** (Number(req.body.code) * code)) + "").substring(0, 4)
+            body: generateAccountVerifyCode(frontCode, code)
         })
         res.status(200).json({
             success: true,
             code: code
         })
     } catch (e) {
+        console.log(e)
         res.status(500).json({
             error: "server side"
         })
@@ -290,6 +302,11 @@ const changePwd = async (req, res) => {
         console.log(e)
         return res.status(500).json({ error: "server side" })
     }
+}
+
+
+const sendNewVerificationCode = (req, res) => {
+    // must be completed
 }
 
 

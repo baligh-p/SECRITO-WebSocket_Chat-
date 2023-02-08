@@ -34,11 +34,11 @@ const Sign = () => {
             setIsLoading(true)
             setConditionsError(false)
             try {
-                const code = parseInt(Math.random() * 3 + 2)
+                const code = parseInt(Math.random() * 10) + "" + parseInt(Math.random() * 10)
                 var res = await axiosInstance.post("/users/vrfC", { ...data, "code": code })
                 if (res.status === 200) {
                     navigate("/auth/email-verify", {
-                        state: { ...data, fCode: code, bCode: parseInt(res.data.code) }
+                        state: { ...data, fCode: code, bCode: res.data.code }
                     })
                 }
                 setIsLoading(false)
