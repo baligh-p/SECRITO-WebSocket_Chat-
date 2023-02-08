@@ -4,7 +4,6 @@ var { createUser,
     refreshUserToken,
     login,
     welcome,
-    getImageByName,
     verifyCredentials,
     changePwd,
     sendChangePwdLink } = require("../Controller/userController")

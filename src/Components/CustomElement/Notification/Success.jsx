@@ -31,7 +31,7 @@ const Success = ({ displayNotification, message, closeNotification }) => {
                             <h2 className='text-lg leading-5'>Success</h2>
                             <p className='text-[14px] w-11/12 text-stone-500 leading-4'>{message}</p>
                         </div>
-                        <div className='flex-1 h-1 w-full absolute bottom-0 flex-wrap timer before:bg-green-500 bg-transparent rounded-b-lg'></div>
+                        <div className='h-1 w-full timer before:h-1 before:bg-green-500 bg-transparent rounded-b-lg'></div>
                     </div>
                 </div>
             </div>

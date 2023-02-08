@@ -328,7 +328,7 @@ const sendChangePwdLink = async (req, res) => {
                     })
                     await LinkPWD.save()
                 }
-                mailer({ isHtml: true, subject: "[Reset your password]", to: email, body: changePwdEmail(code, email) }, () => {
+                mailer({ isHtml: true, subject: "[Secrito] Reset your password", to: email, body: changePwdEmail(code, email) }, () => {
                     console.log("success")
                 })
             }
@@ -345,41 +345,41 @@ const sendChangePwdLink = async (req, res) => {
     }
 }
 
-// Retrieve and Return user Profile image
-const getImageByName = async (req, res) => {
-    try {
-        x = await getUserPhoto(req.params.imgName)
-        return res.status(200).json(x)
-    } catch (e) {
-        return res.status(500).send({
-            error: e.message
-        })
-    }
-}
+// // Retrieve and Return user Profile image
+// const getImageByName = async (req, res) => {
+//     try {
+//         x = await getUserPhoto(req.params.imgName)
+//         return res.status(200).json(x)
+//     } catch (e) {
+//         return res.status(500).send({
+//             error: e.message
+//         })
+//     }
+// }
 
-// Get UrlImage by ImageName
-async function getUserPhoto(imgName) {
-    try {
-        await mongoClient.connect()
-        const database = mongoClient.db(process.enc.databse)
-        const images = database.collection(process.enc.imgBucket + ".files")
-        cursor = images.find({ filename: imgName })
-        if (cursor.count == 0) {
-            return {
-                message: "there is no image with the following name" + imgName
-            }
-        }
-        let fileInfos = [];
-        await cursor.forEach((doc) => {
-            fileInfos.push({
-                url: baseUrl + doc.filename
-            });
-        });
-        return fileInfos[0]
-    } catch (e) {
-        return e.message
-    }
-}
+// // Get UrlImage by ImageName
+// async function getUserPhoto(imgName) {
+//     try {
+//         await mongoClient.connect()
+//         const database = mongoClient.db(process.enc.databse)
+//         const images = database.collection(process.enc.imgBucket + ".files")
+//         cursor = images.find({ filename: imgName })
+//         if (cursor.count == 0) {
+//             return {
+//                 message: "there is no image with the following name" + imgName
+//             }
+//         }
+//         let fileInfos = [];
+//         await cursor.forEach((doc) => {
+//             fileInfos.push({
+//                 url: baseUrl + doc.filename
+//             });
+//         });
+//         return fileInfos[0]
+//     } catch (e) {
+//         return e.message
+//     }
+// }
 
 
 const welcome = async (req, res) => {
@@ -392,7 +392,6 @@ module.exports = {
     refreshUserToken,
     login,
     welcome,
-    getImageByName,
     verifyCredentials,
     changePwd,
     sendChangePwdLink

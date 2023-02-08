@@ -31,7 +31,8 @@ const changePwdEmail = (code, email) => {
             padding: 0;
             margin: 0;
         }
-        .card {
+        @media screen and (min-width:700px) {
+          .card {
             padding-top: 5px;
             padding-bottom: 5px;
             background-color:white;
@@ -42,6 +43,65 @@ const changePwdEmail = (code, email) => {
             box-shadow: 1px 10px 15px rgb(240, 239, 239);
             margin-left: auto;
             margin-right: auto;
+        }  
+        .card .firstP{
+            margin-bottom:50px;
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            width: 80%;
+            font-size:17px;
+        }
+        .card .secondP{
+            width: 80%;
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            font-size:17px;
+        }
+        .card h2 {
+            font-size: 30px;
+            color :#404040;
+            margin-bottom:50px;
+            width: 100%;
+            text-align: center;
+        }
+        }
+        @media screen and (max-width:699px) {
+          .card {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            background-color:white;
+            border: 0 solid transparent;
+            border-radius: 4px;
+            width:100%; 
+            height:80%;
+            box-shadow: 1px 10px 15px rgb(240, 239, 239);
+            margin-left: auto;
+            margin-right: auto;
+        }  
+        .card .firstP{
+            margin-bottom:50px;
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            width: 95%;
+            font-size:17px;
+        }
+        .card .secondP{
+            width: 95%;
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            font-size:17px;
+        }
+        .card h2 {
+            font-size: 25px;
+            color :#404040;
+            margin-bottom:50px;
+            width: 100%;
+            text-align: center;
+        }
         }
         .title{
             width: 100%;
@@ -81,28 +141,6 @@ const changePwdEmail = (code, email) => {
             border-radius: 5px;
             box-shadow: 1px 10px 15px rgb(221, 221, 221);
         } 
-        .card h2 {
-            font-size: 30px;
-            color :#404040;
-            margin-bottom:50px;
-            width: 100%;
-            text-align: center;
-        }
-        .card .firstP{
-            margin-bottom:50px;
-            text-align: center;
-            margin-right: auto;
-            margin-left: auto;
-            width: 80%;
-            font-size:17px;
-        }
-        .card .secondP{
-            width: 80%;
-            text-align: center;
-            margin-right: auto;
-            margin-left: auto;
-            font-size:17px;
-        }
         .aboutSection{
             margin-top: 50px;
             padding-bottom: 50px;

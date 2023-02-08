@@ -6,15 +6,29 @@ import { useParams } from "react-router-dom"
 import axiosInstance from "../../functions/AxiosIntance"
 import { NotificationState } from '../../SharedStates/NotificationState'
 import { useSetRecoilState } from 'recoil'
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate } from 'react-router-dom'
+import * as yup from "yup"
+
+const validationSchema = yup.object({
+    password: yup.string().min(5, "Password must have at least 5 characters").required("Password must have at least 5 characters"),
+    confirme: yup.string().oneOf([yup.ref("password")], "Passwords does not match")
+})
+
 const ChangePassword = () => {
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm()
+    const { register, handleSubmit, formState: { errors }, clearErrors, } = useForm({
+        resolver: yupResolver(validationSchema)
+    })
+
+
     const [isLoading, setIsLoading] = useState(false)
-    const [changed, setChanged] = useState(false)
 
     const { email, code } = useParams()
 
     const notification = useSetRecoilState(NotificationState)
+
+    const navigate = useNavigate()
 
     const handleFocus = (e) => {
         const input = e.target
@@ -41,6 +55,7 @@ const ChangePassword = () => {
     }
 
     const submit = async (data) => {
+        setIsLoading(true)
         try {
             const res = await axiosInstance({
                 method: "post",
@@ -51,11 +66,17 @@ const ChangePassword = () => {
                 },
                 url: "/users/changePWD"
             })
+            setIsLoading(false)
             if (res.status === 200) {
-                setChanged(true)
+                notification({ type: "success", message: "Password was changed successfully" })
+                navigate("/")
+            }
+            else {
+                notification({ type: "error", message: "something wrong. please try again in few seconds." })
             }
         } catch (e) {
             console.log(e)
+            setIsLoading(false)
             notification({ type: "error", message: "something wrong. please try again in few seconds." })
         }
     }
@@ -66,39 +87,27 @@ const ChangePassword = () => {
                 <img className='h-24' src="/assets/images/padlock.png" alt="change password logo" />
                 <h1 className='my-5 font-bold text-2xl tracking-wide text-indigo-600'>Reset Password</h1>
                 <p className='text-stone-500 text-sm text-center mb-5'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi corrupti quia a eum quasi officiis.</p>
-                {(!changed) && (<><div className='flex space-y-1 flex-col w-full md:w-9/12 lg:w-full'>
+                <div className='flex space-y-1 flex-col w-full md:w-9/12 lg:w-full'>
                     <label style={{ color: errors.password?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }}
                         className='relative z-50 duration-150 left-2 cursor-text p-1 bg-white max-w-min whitespace-nowrap select-none text-stone-700 lg:translate-y-[42px] translate-y-[46px] text-[15px]
                       lg:text-sm'>Password</label>
-                    <input name="password" style={{ borderColor: errors.password?.message ? "rgb(239 68 68)" : "" }} {...register("password", {
-                        required: "Password must have at least 5 characters",
-                        minLength: {
-                            value: 5,
-                            message: "Password must have at least 5 characters"
-                        }
-                    })}
+                    <input name="password" style={{ borderColor: errors.password?.message ? "rgb(239 68 68)" : "" }} {...register("password")}
                         onFocus={handleFocus} onBlur={handleBlur} type="password" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
                     <p className='text-red-500 font-body text-[13px] ml-1'>{errors.password?.message}</p>
                 </div>
-                    <div className='flex space-y-1 flex-col w-full md:w-9/12 lg:w-full'>
-                        <label style={{ color: errors.confirme?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }}
-                            className='relative z-50 duration-150 left-2 cursor-text p-1 bg-white max-w-min whitespace-nowrap select-none text-stone-700 lg:translate-y-[42px] translate-y-[46px] text-[15px]
+                <div className='flex space-y-1 flex-col w-full md:w-9/12 lg:w-full'>
+                    <label style={{ color: errors.confirme?.message ? "rgb(239 68 68)" : "" }} onClick={(e) => { e.target.parentNode.children[1].focus() }}
+                        className='relative z-50 duration-150 left-2 cursor-text p-1 bg-white max-w-min whitespace-nowrap select-none text-stone-700 lg:translate-y-[42px] translate-y-[46px] text-[15px]
                       lg:text-sm'>Confirme Password</label>
-                        <input name="confirme" style={{ borderColor: errors.confirme?.message ? "rgb(239 68 68)" : "" }} {...register("confirme", {
-                            required: watch("password") !== watch("confirme") ? "Please confirme right your password" : ""
-                        })}
-                            onFocus={handleFocus} onBlur={handleBlur} type="password" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
-                        <p className='text-red-500 font-body text-[13px] ml-1'>{errors.confirme?.message}</p>
-                    </div></>)}
+                    <input name="confirme" style={{ borderColor: errors.confirme?.message ? "rgb(239 68 68)" : "" }} {...register("confirme")}
+                        onFocus={handleFocus} onBlur={handleBlur} type="password" className="bg-white duration-150 rounded-md outline-none text-[17px]  lg:text-base h-10 px-2 py-[25px] lg:py-[22px] border-2 border-stone-200" />
+                    <p className='text-red-500 font-body text-[13px] ml-1'>{errors.confirme?.message}</p>
+                </div>
                 <div className='w-full md:w-9/12 lg:w-full'>
-                    {(!changed) && (<button disabled={isLoading || changed} type='submit' className="h-11 mt-14 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
+                    <button disabled={isLoading} type='submit' className="h-11 mt-14 flex items-center justify-center text-lg rounded-md text-white shadow-lg shadow-neutral-300 hover:bg-indigo-600 duration-200 delay-75 w-full bg-indigo-500">
                         {(!isLoading) && (<p>Reset Password</p>) ||
                             (<Loader height="23px" color="white" size="23px" border="3px" />)}
-                    </button>) ||
-                        (<div className='bg-green-300 h-11 rounded-md flex items-center'>
-                            <img src="/assets/icons/checked.png" className='h-5 mx-2' alt="success icon" />
-                            <p className='text-md text-green-800'>Password changed successfully</p>
-                        </div>)}
+                    </button>
                 </div>
             </form>
         </div >

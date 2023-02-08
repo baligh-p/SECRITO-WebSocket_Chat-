@@ -19,9 +19,6 @@ const Login = () => {
     const slider = useRef(null)
 
     const setNotification = useSetRecoilState(NotificationState)
-    const trigger = () => {
-        setNotification({ type: "success", message: "something wrong. please try again in few seconds." })
-    }
 
     const successFunction = (res) => {
         console.log(res)
@@ -60,7 +57,7 @@ const Login = () => {
             setIsLoading(false)
             const status = e.response?.status
             if (status === 500) {
-                //show notification for 500 status
+                setNotification({ type: "error", message: "something wrong. please try again in few seconds." })
             }
             else if (status == 400) {
                 setBadCredentialsError(true)
@@ -125,7 +122,7 @@ const Login = () => {
                     and password you entered.<span className='hidden lg:inline-flex'>Please check your email and password and try again.</span></p>
             </div>
             <div className='lg:w-[45%] py-10 w-full min-h-screen flex flex-col bg-white items-center justify-center'>
-                <h1 className='lg:text-[40px] text-[35px] mb-1 flex  text-indigo-500 tracking-wider font-title font-bold text-center' onClick={trigger}>Secrito</h1>
+                <h1 className='lg:text-[40px] text-[35px] mb-1 flex  text-indigo-500 tracking-wider font-title font-bold text-center'>Secrito</h1>
                 <p className='text-stone-500 mb-9 text-sm text-center'>log in to buy services, create or join teams.</p>
                 <div className='w-full flex items-center flex-col space-y-3 justify-center'>
                     <div className='lg:w-7/12 w-10/12'>
