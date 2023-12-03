@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const mailer = require("../middleware/mailer")
 const upload = require("../middleware/upload")
-const { Link } = require("react-router-dom")
 const mongoClient = require("mongodb").MongoClient;
 
 const baseUrl = "http://localhost:4000/files/";
@@ -26,22 +25,6 @@ const createUser = async (req, res) => {
                 message: "password must have at least 5 characters"
             })
         }
-        // await upload(req, res)
-        // console.log(req.file)
-        // if (req.file == undefined) {
-        //     res.send({
-        //         message: "You must select a file."
-        //     });
-        // }
-        // else if (req.file.bucketName == 'photos') {
-        //     res.send({
-        //         message: "File has been uploaded."
-        //     })
-        // } else {
-        //     res.status(400).json({
-        //         error: "Image Type should be (JPEG/PNG)"
-        //     })
-        // }
         const encryptedPassword = await bcrypt.hash(data.password.trim(), 10)
         const userInstance = await User.create({
             username: data.username.trim(),
@@ -54,7 +37,7 @@ const createUser = async (req, res) => {
         await userInstance.save()
         const accessToken = jwt.sign(
             {
-                userId: userInstance._id,
+                userId: userInstance._id.toString(),
                 email: userInstance.email,
                 username: userInstance.username,
                 name: userInstance.name,
@@ -67,7 +50,7 @@ const createUser = async (req, res) => {
         )
         const refreshToken = jwt.sign(
             {
-                userId: userInstance._id,
+                userId: userInstance._id.toString(),
                 email: userInstance.email,
                 username: userInstance.username,
                 name: userInstance.name,
@@ -187,7 +170,7 @@ const login = async (req, res) => {
             if (userInstance && (await bcrypt.compare(data.password.trim(), userInstance.password))) {
                 const accessToken = jwt.sign(
                     {
-                        userId: userInstance._id,
+                        userId: userInstance._id.toString(),
                         email: userInstance.email,
                         username: userInstance.username,
                         name: userInstance.name,
@@ -200,7 +183,7 @@ const login = async (req, res) => {
                 )
                 const refreshToken = jwt.sign(
                     {
-                        userId: userInstance._id,
+                        userId: userInstance._id.toString(),
                         email: userInstance.email,
                         username: userInstance.username,
                         name: userInstance.name,
@@ -253,7 +236,7 @@ const refreshUserToken = async (req, res) => {
                 } else {
                     var accessToken = jwt.sign(
                         {
-                            userId: decoded._id,
+                            userId: decoded.userId.toString(),
                             email: decoded.email,
                             username: decoded.username,
                             name: decoded.name,
@@ -362,42 +345,6 @@ const sendChangePwdLink = async (req, res) => {
     }
 }
 
-// // Retrieve and Return user Profile image
-// const getImageByName = async (req, res) => {
-//     try {
-//         x = await getUserPhoto(req.params.imgName)
-//         return res.status(200).json(x)
-//     } catch (e) {
-//         return res.status(500).send({
-//             error: e.message
-//         })
-//     }
-// }
-
-// // Get UrlImage by ImageName
-// async function getUserPhoto(imgName) {
-//     try {
-//         await mongoClient.connect()
-//         const database = mongoClient.db(process.enc.databse)
-//         const images = database.collection(process.enc.imgBucket + ".files")
-//         cursor = images.find({ filename: imgName })
-//         if (cursor.count == 0) {
-//             return {
-//                 message: "there is no image with the following name" + imgName
-//             }
-//         }
-//         let fileInfos = [];
-//         await cursor.forEach((doc) => {
-//             fileInfos.push({
-//                 url: baseUrl + doc.filename
-//             });
-//         });
-//         return fileInfos[0]
-//     } catch (e) {
-//         return e.message
-//     }
-// }
-
 
 const welcome = async (req, res) => {
     res.status(200).json(req.body)
@@ -413,71 +360,3 @@ module.exports = {
     changePwd,
     sendChangePwdLink
 }
-
-// get all images ( mazelt configuration feha)
-// const getListFiles = async (req, res) => {
-//     try {
-//       await mongoClient.connect();
-
-//       const database = mongoClient.db(dbConfig.database);
-//       const images = database.collection(dbConfig.imgBucket + ".files");
-
-//       const cursor = images.find({});
-
-//       if ((await cursor.count()) === 0) {
-//         return res.status(500).send({
-//           message: "No files found!",
-//         });
-//       }
-
-//       let fileInfos = [];
-//       await cursor.forEach((doc) => {
-//         fileInfos.push({
-//           name: doc.filename,
-//           url: baseUrl + doc.filename,
-//         });
-//       });
-
-//       return res.status(200).send(fileInfos);
-//     } catch (error) {
-//       return res.status(500).send({
-//         message: error.message,
-//       });
-//     }
-//   };
-
-
-
-//-------------------------------------------------------------------------------
-
-
-
-// download from database a photo ( search by photo name)
-//   const download = async (req, res) => {
-//     try {
-//       await mongoClient.connect();
-
-//       const database = mongoClient.db(dbConfig.database);
-//       const bucket = new GridFSBucket(database, {
-//         bucketName: dbConfig.imgBucket,
-//       });
-
-//       let downloadStream = bucket.openDownloadStreamByName(req.params.name);
-
-//       downloadStream.on("data", function (data) {
-//         return res.status(200).write(data);
-//       });
-
-//       downloadStream.on("error", function (err) {
-//         return res.status(404).send({ message: "Cannot download the Image!" });
-//       });
-
-//       downloadStream.on("end", () => {
-//         return res.end();
-//       });
-//     } catch (error) {
-//       return res.status(500).send({
-//         message: error.message,
-//       });
-//     }
-//   };

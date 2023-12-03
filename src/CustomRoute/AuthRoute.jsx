@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom"
 import { useRecoilState } from "recoil"
 import UserState from "../SharedStates/UserState"
 const AuthRoute = React.memo(({ loading }) => {
-    const [user, setUser] = useRecoilState(UserState)
+    const [user,] = useRecoilState(UserState)
     const [ready, setReady] = useState(loading)
     useEffect(() => {
         var time

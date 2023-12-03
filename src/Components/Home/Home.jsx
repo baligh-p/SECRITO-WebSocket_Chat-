@@ -2,12 +2,12 @@ import React from 'react'
 import MessageHistory from './MessageHistory/MessageHistory'
 import Discussion from "./Discussion/Discussion"
 import Friends from "./Friends/Friends"
-const Home = () => {
+const Home = ({ socket }) => {
     return (
         <div className='lg:h-screen min-h-screen flex w-full items-center bg-neutral-900'>
             <MessageHistory />
-            <Discussion />
-            <Friends />
+            <Discussion socket={socket} />
+            <Friends socket={socket} />
         </div>
     )
 }

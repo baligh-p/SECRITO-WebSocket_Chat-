@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import { useForm } from "react-hook-form"
 import axiosInstance from "../../functions/AxiosIntance"
 import { useCookies } from "react-cookie"
-import { useNavigate } from 'react-router-dom'
 import "./Login.scss"
 import Loader from '../CustomElement/Loader/Loader'
 import { NotificationState } from '../../SharedStates/NotificationState'
@@ -35,13 +34,12 @@ const Login = () => {
     //isLoading state 
     const [isLoading, setIsLoading] = useState(false)
 
-    const [cookie, setCookie] = useCookies()
-    const navigate = useNavigate()
+    const [, setCookie] = useCookies()
     const submit = async (data) => {
         setIsLoading(true)
         try {
             var res = await axiosInstance.post("/users/login", data)
-            if (res.status == 200) {
+            if (res.status === 200) {
                 setBadCredentialsError(false)
                 setCookie("rmbr", data.rememberMe, { path: "/", maxAge: 365 * 24 * 60 * 60 * 60 })
                 setCookie(
@@ -59,7 +57,7 @@ const Login = () => {
             if (status === 500) {
                 setNotification({ type: "error", message: "something wrong. please try again in few seconds." })
             }
-            else if (status == 400) {
+            else if (status === 400) {
                 setBadCredentialsError(true)
             }
 

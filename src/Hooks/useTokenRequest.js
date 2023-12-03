@@ -3,35 +3,29 @@ import { useCookies } from "react-cookie"
 import axiosInstance from "../functions/AxiosIntance"
 import { useLogOut } from "./Logout"
 
-export const useTokenRequest = (url, method, { forMain = false, setIsLoading = () => { } }, successFunction = () => { }, failureFunction = () => { }) => {
+export const useTokenRequest = (requestFunction = () => { }, setLoading = () => { }) => {
 
     const [cookie, setCookie] = useCookies()
     const logout = useLogOut()
-    const refresh = useCallback(async () => {
+
+    const refresh = useCallback(async (ck = null) => {
+        console.log("ck : " + ck)
+        var atk = ck || cookie.atk
         try {
-            var res = await axiosInstance({
-                url: url,
-                method: method,
-                headers: {
-                    Authorization: "Bearer " + cookie.atk
-                }
-            })
-            if (forMain) setIsLoading(false)
-            if (res.status === 200) {
-                successFunction(res.data)
-            }
+            await requestFunction(atk) // only contains axios block without try catch
         }
         catch (err) {
             console.log(err)
+            setLoading(false)
             //no token provided or bad token
             if ((err.response?.status === 403 && err.response?.data?.name === "NoTokenProvided")
                 || (err.response?.data?.name === "JsonWebTokenError")) {
-                if (forMain) setIsLoading(false)
                 logout()
             }
             else if (err.response?.status === 406 && err.response?.data?.name === "TokenExpiredError") {
                 //expired token | user must be notified
                 try {
+                    console.log("refreshing token")
                     const res = await axiosInstance.get("/users/refresh")
                     if (res.status === 200) {
                         setCookie(
@@ -42,12 +36,12 @@ export const useTokenRequest = (url, method, { forMain = false, setIsLoading = (
                                 maxAge: cookie.rmbr ? 365 * 24 * 60 * 60 * 60 : undefined
                             }
                         )
+                        console.log("after refresh : " + res.data.accessToken)
+                        return refresh(res.data.accessToken)
                     }
                 } catch (e) {
-                    failureFunction() //to-do::check if error server or refresh token error
                     console.log(e)
                     logout()
-                    if (forMain) setIsLoading(false)
                 }
             }
         }

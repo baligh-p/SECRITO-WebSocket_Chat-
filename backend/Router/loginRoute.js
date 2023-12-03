@@ -6,7 +6,7 @@ var { createUser,
     welcome,
     verifyCredentials,
     changePwd,
-    sendChangePwdLink } = require("../Controller/userController")
+    sendChangePwdLink } = require("../Controller/userAuthController")
 
 var authMiddleWare = require("../middleware/auth")
 

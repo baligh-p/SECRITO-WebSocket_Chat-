@@ -1,13 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import "./Friends.scss"
 import Invite from './Invite/Invite'
 import { ReactComponent as ImageIcon } from "../../../SVGs/image.svg"
 import { ReactComponent as NotificationIcon } from "../../../SVGs/mute.svg"
+import { useRecoilValue } from 'recoil'
 import { useLogOut } from '../../../Hooks/Logout'
-const Friends = () => {
+import UserState from '../../../SharedStates/UserState'
+import AxiosInstance from "../../../functions/AxiosIntance"
+import { useTokenRequest } from '../../../Hooks/useTokenRequest'
+import { useCookies } from 'react-cookie'
+const Friends = ({ socket }) => {
     //States
     const [isSearching, setIsSearching] = useState(false)
     const [showInvites, setShowInvites] = useState(false)
+    const [users, setUsers] = useState([])
+    const [cookie, setCookie] = useCookies()
+    const user = useRecoilValue(UserState)
     //Refs 
     const searchInput = useRef()
     //effects
@@ -23,7 +31,25 @@ const Friends = () => {
     }
 
     const logout = useLogOut()
+    const searchRequest = async (token) => {
+        if (searchInput.current.value) {
+            const response = await AxiosInstance({
+                url: `/friends/findUser/${searchInput.current.value}`,
+                method: "get",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log(response.data)
+            setUsers(response.data || [])
+        }
+    }
 
+
+    const searchUserRequest = useTokenRequest(searchRequest)
+    const handleSearchChange = () => {
+        searchUserRequest()
+    }
     return (
         <div className='friendsContainer hidden lg:flex flex-col w-[26%] h-full ml-auto px-1.5 pb-3'>
             <div className='h-[25%] w-full flex flex-col items-center justify-center'>
@@ -36,10 +62,12 @@ const Friends = () => {
                             </div>
                         </div>
                         <div className='ml-auto mr-2'>
-                            <h3 className='text-white font-body font-bold tracking-wide cursor-pointer'>Raed Bouafif</h3>
+                            <h3 className='text-white font-body font-bold tracking-wide cursor-pointer'>{user?.userData?.username}</h3>
                             <p onClick={logout} className='text-sm text-red-500 hover:text-red-600 hover:underline cursor-pointer'>Log Out</p>
                         </div>
-                        <img src="/assets/images/RaedBouafif jimla.jpg" className='h-14 w-14 rounded-full' alt="photo profile of ..." />
+                        {(user?.userData?.image) && (<img src="/assets/images/RaedBouafif jimla.jpg" className='h-14 w-14 rounded-full' alt="photo profile of ..." />)
+                            || (<div className='h-14 w-14 bg-orange-500 select-none cursor-pointer text-3xl text-white flex items-center justify-center rounded-full 
+                            text-center'><h2 className='relative bottom-px'>{user?.userData?.username[0]?.toUpperCase()}</h2></div>)}
                     </div>
                 </div>
                 <div className='flex items-end h-1/3 w-full'>
@@ -61,8 +89,13 @@ const Friends = () => {
                   4.7c-12 0-21.7-9.7-21.7-21.7s9.7-21.7 21.7-21.7 21.7 9.7 21.7 21.7-9.7 21.7-21.7 21.7z" />
                 </svg>)}
                 {(isSearching) && (<svg onClick={hideSearch} xmlns="http://www.w3.org/2000/svg" className='absolute z-20 mr-2 right-0 fill-stone-200 h-5 w-5 cursor-pointer hover:scale-110 duration-150' enableBackground="new 0 0 32 32" viewBox="0 0 32 32"><path d="M31.5,2.42828c0-0.51752-0.20148-1.00427-0.56763-1.36987c-0.73224-0.73224-2.00751-0.73224-2.73975,0L16,13.25104L3.80737,1.05841c-0.73224-0.73224-2.00751-0.73224-2.73975,0C0.70154,1.42401,0.5,1.91077,0.5,2.42828c0,0.51746,0.20154,1.00421,0.56763,1.36987l12.19263,12.19263L1.06763,28.18341C0.70154,28.54901,0.5,29.03577,0.5,29.55328c0,0.51746,0.20154,1.00421,0.56763,1.36987c0.73224,0.73224,2.00751,0.73224,2.73975,0L16,18.73053l12.19263,12.19263c0.36615,0.36609,0.85242,0.56763,1.36987,0.56763c0.51752,0,1.00378-0.20154,1.36987-0.56763C31.29852,30.5575,31.5,30.07074,31.5,29.55328c0-0.51752-0.20148-1.00427-0.56763-1.36987L18.73975,15.99078L30.93237,3.79816C31.29852,3.4325,31.5,2.94574,31.5,2.42828z" /></svg>)}
-                <input ref={searchInput} onBlur={() => { if (!searchInput.current.value.length) setIsSearching(false) }} type="text"
+                <input onInput={handleSearchChange} ref={searchInput} onBlur={() => { if (!searchInput.current.value.length) setIsSearching(false) }} type="text"
                     className={`${isSearching ? "w-full px-2 border" : "w-0"} ml-auto duration-200 z-10 h-11 bg-neutral-900 outline-none text-white border-white rounded-md`} />
+                <div>
+                    {users.map((element, index) => {
+                        return <div key={index} >{element.username}</div>
+                    })}
+                </div>
             </div>
             <div className='friendListContainer w-full max-h-[63%] space-y-2 text-body overflow-y-auto'>
                 {(!showInvites) && (<div className='hover:bg-neutral-800 element flex items-center duration-150 p-1 rounded-md cursor-pointer'>

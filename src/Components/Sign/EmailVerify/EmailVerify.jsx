@@ -13,8 +13,7 @@ const EmailVerify = React.memo(() => {
 
     const [isLoading, setIsLoading] = useState(false)
 
-    const [cookie, setCookie] = useCookies()
-    const navigate = useNavigate()
+    const [, setCookie] = useCookies()
 
     const location = useLocation()
 

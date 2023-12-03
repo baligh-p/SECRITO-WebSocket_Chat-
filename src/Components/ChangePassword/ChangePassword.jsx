@@ -17,7 +17,7 @@ const validationSchema = yup.object({
 
 const ChangePassword = () => {
 
-    const { register, handleSubmit, formState: { errors }, clearErrors, } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(validationSchema)
     })
 

@@ -32,7 +32,8 @@ const User = new mongoose.Schema({
     dateCreation: {
         type: Date,
         default: Date.now
-    }
+    },
+    friends: [{ ref: "Friend", type: mongoose.Schema.Types.ObjectId }]
 })
 
 
